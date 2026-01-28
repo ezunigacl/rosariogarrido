@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rosario Garrido | Psicología y Mediación Familiar</title>
+    <meta name="description" content="Psicóloga y Mediadora Familiar en O'Higgins. Diagnóstico ADOS-2, apoyo escolar y mediación legal. Atención presencial en Mostazal y online.">
+    
+    <!-- Google Fonts 2026 Update: Instrument Serif (Editorial/Authority) & Manrope (Functional/Modern) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuración Personalizada de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            base: '#FAF9F6', // Off-white orgánico
+                            mocha: '#A47864', // Mocha Mousse
+                            lavender: '#A78BFA', // Digital Lavender
+                            mahogany: '#7A2E2A', // Warm Mahogany
+                            dark: '#1A1918'  // Un negro más cálido y profundo para Instrument Serif
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Manrope', 'sans-serif'],
+                        serif: ['Instrument Serif', 'serif'],
+                    },
+                    borderRadius: {
+                        '4xl': '2.5rem', // Bordes un poco más pronunciados estilo 2026
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 40px -15px rgba(164, 120, 100, 0.15)',
+                        'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.3)',
+                    },
+                    letterSpacing: {
+                        'tightest': '-0.02em', // Instrument Serif se ve mejor un poco más apretada
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos base y utilidades personalizadas */
+        body {
+            background-color: #FAF9F6;
+            color: #1A1918;
+        }
+        
+        .glass-nav {
+            background: rgba(250, 249, 246, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(164, 120, 100, 0.08);
+        }
+
+        /* Animaciones de entrada */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); /* Curva más suave */
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* FIX DEL FLICKERING (TIBILITEO):
+           Eliminamos el cambio de ancho (flex-grow) y usamos 
+           opacidad y escala de imagen de fondo para el efecto.
+        */
+        .split-container {
+            overflow: hidden;
+        }
+        
+        .split-section {
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Fondo decorativo sutil para hover */
+        .split-bg-hover {
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        @media (min-width: 768px) {
+            /* Cuando hago hover en el contenedor, oscurezco LIGERAMENTE ambos */
+            .split-container:hover .split-section {
+                opacity: 0.5;
+                filter: grayscale(40%); /* Desaturar lo que no estoy mirando */
+            }
+            
+            /* Cuando hago hover en UNA sección específica, la resalto */
+            .split-container .split-section:hover {
+                opacity: 1;
+                filter: grayscale(0%);
+                z-index: 10;
+                /* Eliminado el flex: 1.2 que causaba el salto */
+                transform: scale(1.02); /* Zoom muy sutil a todo el bloque */
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            }
+        }
+    </style>
+</head>
+<body class="antialiased overflow-x-hidden selection:bg-brand-mocha selection:text-white">
+
+    <!-- Sticky Navigation -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-24"> <!-- Navbar un poco más alto para elegancia -->
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="font-serif text-3xl text-brand-mahogany tracking-tight hover:opacity-80 transition-opacity">
+                        Rosario Garrido<span class="text-brand-mocha text-4xl leading-none">.</span>
+                    </a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-10 items-center">
+                    <a href="#especialidades" class="text-brand-dark hover:text-brand-mocha transition-colors font-medium text-sm tracking-wide">ESPECIALIDADES</a>
+                    <a href="#historia" class="text-brand-dark hover:text-brand-mocha transition-colors font-medium text-sm tracking-wide">MI HISTORIA</a>
+                    <a href="#testimonios" class="text-brand-dark hover:text-brand-mocha transition-colors font-medium text-sm tracking-wide">TESTIMONIOS</a>
+                    <button onclick="openModal()" class="bg-brand-dark text-white px-7 py-3 rounded-full hover:bg-brand-mocha transition-all shadow-soft transform hover:-translate-y-0.5 font-medium text-sm tracking-wide">
+                        Agendar Cita
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-brand-dark focus:outline-none p-2">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[#FAF9F6] border-t border-gray-100 absolute w-full shadow-xl">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#especialidades" class="block px-3 py-4 text-brand-dark font-medium border-b border-gray-100">Especialidades</a>
+                <a href="#historia" class="block px-3 py-4 text-brand-dark font-medium border-b border-gray-100">Mi Historia</a>
+                <a href="#testimonios" class="block px-3 py-4 text-brand-dark font-medium border-b border-gray-100">Testimonios</a>
+                <button onclick="openModal()" class="w-full text-left px-3 py-4 text-brand-mahogany font-bold mt-2">Agendar Ahora <i class="fas fa-arrow-right ml-2"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Split Screen Hero Section -->
+    <header class="relative pt-24 md:pt-0 min-h-screen flex flex-col md:flex-row split-container bg-brand-base">
+        
+        <!-- Izquierda: Clínica (Digital Lavender) -->
+        <div class="split-section relative w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 border-b md:border-b-0 md:border-r border-gray-200 overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute inset-0 bg-brand-lavender/10"></div>
+            <div class="absolute -top-20 -left-20 w-96 h-96 bg-brand-lavender/20 rounded-full blur-3xl"></div>
+            
+            <div class="relative z-10 max-w-md text-center md:text-left reveal active">
+                <span class="inline-block py-1.5 px-4 rounded-full border border-brand-lavender text-brand-dark text-xs font-bold tracking-widest mb-6 uppercase bg-white/50 backdrop-blur-sm">Psicología Clínica</span>
+                <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl text-brand-dark mb-6 leading-[1.1] tracking-tight">
+                    Un espacio seguro <br><span class="italic font-light text-brand-mocha">para su desarrollo.</span>
+                </h1>
+                <p class="text-lg text-gray-600 mb-10 font-normal leading-relaxed">
+                    Diagnóstico experto ADOS-2 y apoyo escolar online para toda la Región de O'Higgins. Entendiendo el neurodesarrollo desde la empatía.
+                </p>
+                <button onclick="openModal('clinica')" class="group relative inline-flex items-center justify-center px-8 py-4 text-sm font-bold tracking-widest text-white bg-brand-dark rounded-full shadow-lg hover:bg-brand-lavender hover:text-brand-dark transition-all duration-300 uppercase">
+                    Iniciar Terapia
+                    <i class="fas fa-arrow-right ml-3 transform group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Derecha: Mediación (Warm Mahogany) -->
+        <div class="split-section relative w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 overflow-hidden">
+             <!-- Background Decoration -->
+             <div class="absolute inset-0 bg-brand-mahogany/5"></div>
+             <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-brand-mahogany/10 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10 max-w-md text-center md:text-left reveal active" style="transition-delay: 150ms;">
+                <span class="inline-block py-1.5 px-4 rounded-full border border-brand-mahogany/30 text-brand-mahogany text-xs font-bold tracking-widest mb-6 uppercase bg-white/50 backdrop-blur-sm">Mediación Familiar</span>
+                <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl text-brand-mahogany mb-6 leading-[1.1] tracking-tight">
+                    Acuerdos que <br><span class="italic font-light">brindan paz.</span>
+                </h1>
+                <p class="text-lg text-gray-600 mb-10 font-normal leading-relaxed">
+                    Mediación privada legalmente válida. Resoluciones efectivas para Rengo, Requínoa, Malloa y Quinta de Tilcoco.
+                </p>
+                <button onclick="openModal('mediacion')" class="group relative inline-flex items-center justify-center px-8 py-4 text-sm font-bold tracking-widest text-white bg-brand-mahogany rounded-full shadow-lg hover:bg-[#8B3A36] transition-all duration-300 uppercase">
+                    Solicitar Mediación
+                    <i class="fas fa-balance-scale ml-3 transform group-hover:scale-110 transition-transform"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Banner Regional -->
+    <section id="regional" class="py-16 bg-brand-mocha text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+        <div class="max-w-6xl mx-auto px-4 relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+            <div class="md:w-2/3 reveal">
+                <h2 class="font-serif text-4xl md:text-5xl mb-4 leading-tight">¿Lejos de Rancagua? <span class="italic opacity-80">No es un problema.</span></h2>
+                <p class="text-white/90 text-lg font-light leading-relaxed max-w-2xl">
+                    Evita traslados costosos y listas de espera. Nuestra plataforma de telemedicina segura lleva la consulta clínica a la comodidad de tu hogar en toda la Región de O'Higgins.
+                </p>
+            </div>
+            <div class="md:w-1/3 text-center md:text-right reveal">
+                <a href="#contacto" onclick="openModal()" class="inline-block border border-white/40 hover:border-white hover:bg-white hover:text-brand-mocha text-white px-10 py-4 rounded-full transition-all duration-300 font-medium tracking-wide">
+                    Agendar Telemedicina
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Mi Historia -->
+    <section id="historia" class="py-32 bg-brand-base relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-12 gap-16 items-center">
+                
+                <!-- Foto Profesional -->
+                <div class="md:col-span-5 relative reveal group">
+                    <div class="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl transition-transform duration-700 group-hover:scale-[1.02]">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="Rosario Garrido" 
+                             class="object-cover w-full h-full filter sepia-[0.15]">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-mocha/40 to-transparent opacity-60"></div>
+                    </div>
+                    <!-- Decorative element -->
+                    <div class="absolute -top-6 -left-6 w-24 h-24 border-2 border-brand-mahogany/20 rounded-full -z-10"></div>
+                    <div class="absolute -bottom-6 -right-6 w-40 h-40 bg-brand-lavender/20 rounded-full blur-3xl -z-10"></div>
+                </div>
+
+                <!-- Texto Narrativo -->
+                <div class="md:col-span-7 reveal">
+                    <h2 class="font-serif text-5xl md:text-6xl text-brand-dark mb-10 leading-none">
+                        Entiendo tu camino porque <span class="italic text-brand-mocha block mt-2">también lo recorro.</span>
+                    </h2>
+                    <div class="space-y-8 text-gray-600 text-lg leading-relaxed font-light">
+                        <p>
+                            Soy psicóloga y mediadora, pero ante todo, <strong class="text-brand-mahogany font-semibold">soy madre de tres hijos</strong>. He vivido en primera línea los desafíos del sistema escolar y la complejidad emocional y legal de un proceso de separación personal.
+                        </p>
+                        <p>
+                            Por eso, mi enfoque no es solo técnico: es una alianza real. Entiendo la frustración de no ser escuchado en un colegio y la incertidumbre de un tribunal de familia.
+                        </p>
+                        <blockquote class="border-l-2 border-brand-lavender pl-8 py-2 italic text-brand-dark font-serif text-xl">
+                            "Trabajo para proteger lo que más amas, asegurando que cada acuerdo legal y cada paso terapéutico sea el cimiento de un nuevo comienzo."
+                        </blockquote>
+                    </div>
+                    
+                    <div class="mt-12 flex flex-wrap gap-8">
+                        <div class="flex items-center gap-3">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-mocha/10 text-brand-mocha text-xs"><i class="fas fa-certificate"></i></span>
+                            <span class="text-sm font-bold uppercase tracking-widest text-brand-dark">Psicóloga Clínica</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-mahogany/10 text-brand-mahogany text-xs"><i class="fas fa-gavel"></i></span>
+                            <span class="text-sm font-bold uppercase tracking-widest text-brand-dark">Mediadora Familiar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid de Especialidades -->
+    <section id="especialidades" class="py-32 bg-white rounded-t-[4rem] shadow-[0_-20px_60px_-15px_rgba(0,0,0,0.05)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-20 reveal">
+                <div class="max-w-2xl">
+                    <span class="text-brand-mocha font-bold tracking-widest uppercase text-xs mb-4 block">Mis Áreas de Experiencia</span>
+                    <h2 class="font-serif text-5xl md:text-6xl text-brand-dark leading-tight">Expertise Técnica <br>& <span class="italic text-brand-mahogany">Calidez Humana</span></h2>
+                </div>
+                <div class="hidden md:block pb-4">
+                    <i class="fas fa-star-of-life text-4xl text-brand-lavender animate-spin-slow" style="animation-duration: 10s;"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 auto-rows-[minmax(320px,auto)]">
+                
+                <!-- Card 1: Diagnóstico (Largo) -->
+                <div class="md:col-span-2 bg-[#F8F7F4] p-10 rounded-[2.5rem] hover:shadow-xl transition-all duration-500 group reveal cursor-default">
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="h-14 w-14 bg-white rounded-2xl flex items-center justify-center text-brand-dark shadow-sm group-hover:scale-110 transition-transform duration-500">
+                            <i class="fas fa-brain text-2xl"></i>
+                        </div>
+                        <span class="bg-white px-4 py-1.5 rounded-full text-xs font-bold text-brand-mocha shadow-sm border border-brand-mocha/10">NOTA 7.0</span>
+                    </div>
+                    <h3 class="font-serif text-3xl mb-4 text-brand-dark group-hover:text-brand-mocha transition-colors">Diagnóstico ADOS-2 y WISC-V</h3>
+                    <p class="text-gray-600 text-lg leading-relaxed max-w-lg">
+                        Evaluaciones estandarizadas "Gold Standard" para la detección de Autismo y medición de capacidades cognitivas. Precisión técnica para decisiones informadas.
+                    </p>
+                </div>
+
+                <!-- Card 2: Convivencia (Alto) -->
+                <div class="md:row-span-2 bg-brand-dark p-10 rounded-[2.5rem] text-white relative overflow-hidden group reveal" style="transition-delay: 100ms;">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-brand-lavender/20 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-brand-lavender/30 transition-colors duration-500"></div>
+                    <div class="relative z-10 h-full flex flex-col justify-between">
+                        <div>
+                            <div class="h-14 w-14 bg-white/10 rounded-2xl flex items-center justify-center mb-8 backdrop-blur-md border border-white/10">
+                                <i class="fas fa-school text-2xl"></i>
+                            </div>
+                            <h3 class="font-serif text-3xl mb-6 leading-tight">Convivencia Escolar & Bullying</h3>
+                            <p class="text-white/70 text-lg leading-relaxed font-light">
+                                Estrategias sistémicas para intervenir en conflictos escolares. Apoyo a víctimas y fortalecimiento de la comunidad educativa.
+                            </p>
+                        </div>
+                        <div class="mt-12 pt-8 border-t border-white/10 flex items-center gap-3">
+                            <i class="fas fa-shield-alt text-brand-lavender"></i>
+                            <p class="text-sm font-bold tracking-wide uppercase">Protección Integral</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Mediación (Standard) -->
+                <div class="md:col-span-2 bg-brand-mahogany p-10 rounded-[2.5rem] text-white relative overflow-hidden group reveal cursor-pointer" onclick="openModal('mediacion')" style="transition-delay: 200ms;">
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/noise.png')] opacity-20 mix-blend-overlay"></div>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+                        <div>
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="h-14 w-14 bg-white/10 rounded-2xl flex items-center justify-center text-white backdrop-blur-md">
+                                    <i class="fas fa-gavel text-2xl"></i>
+                                </div>
+                                <span class="text-brand-lavender font-serif italic text-xl">Validez Legal</span>
+                            </div>
+                            <h3 class="font-serif text-3xl mb-3">Mediación Privada</h3>
+                            <p class="text-white/80 text-lg max-w-lg font-light">
+                                Gestión de Alimentos, Visitas y Cuidado Personal. Acuerdos justos sin el desgaste de un juicio largo.
+                            </p>
+                        </div>
+                        <div class="h-16 w-16 rounded-full border border-white/30 flex items-center justify-center group-hover:bg-white group-hover:text-brand-mahogany transition-all duration-300">
+                            <i class="fas fa-arrow-right text-xl transform -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section id="testimonios" class="py-32 bg-brand-base overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-serif text-5xl text-center text-brand-dark mb-20 reveal">Voces de Familias</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Testimonio 1 -->
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm hover:shadow-soft transition-all duration-500 hover:-translate-y-2 reveal">
+                    <div class="text-brand-mocha text-6xl font-serif leading-none mb-6 opacity-50">"</div>
+                    <p class="text-gray-600 text-lg leading-relaxed mb-8 font-light">
+                        Llegamos llenos de dudas sobre el diagnóstico. Rosario no solo nos dio una respuesta técnica con el ADOS-2, nos dio <span class="text-brand-dark font-medium bg-brand-lavender/20 px-1">paz y un camino a seguir.</span>
+                    </p>
+                    <div class="flex items-center gap-4 pt-6 border-t border-gray-100">
+                        <div class="w-12 h-12 bg-[#F0EEED] rounded-full flex items-center justify-center text-brand-dark text-sm font-bold tracking-tighter">MJ</div>
+                        <div>
+                            <p class="text-base font-bold text-brand-dark font-serif">María José L.</p>
+                            <p class="text-xs text-brand-mocha font-bold tracking-widest uppercase">Rancagua</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonio 2 -->
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm hover:shadow-soft transition-all duration-500 hover:-translate-y-2 reveal" style="transition-delay: 100ms;">
+                    <div class="text-brand-mocha text-6xl font-serif leading-none mb-6 opacity-50">"</div>
+                    <p class="text-gray-600 text-lg leading-relaxed mb-8 font-light">
+                        La mediación fue difícil emocionalmente, pero Rosario mantuvo un ambiente de respeto absoluto. Logramos un acuerdo justo sin destruirnos.
+                    </p>
+                    <div class="flex items-center gap-4 pt-6 border-t border-gray-100">
+                        <div class="w-12 h-12 bg-[#F0EEED] rounded-full flex items-center justify-center text-brand-dark text-sm font-bold tracking-tighter">CR</div>
+                        <div>
+                            <p class="text-base font-bold text-brand-dark font-serif">Carlos R.</p>
+                            <p class="text-xs text-brand-mocha font-bold tracking-widest uppercase">Rengo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonio 3 -->
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm hover:shadow-soft transition-all duration-500 hover:-translate-y-2 reveal" style="transition-delay: 200ms;">
+                    <div class="text-brand-mocha text-6xl font-serif leading-none mb-6 opacity-50">"</div>
+                    <p class="text-gray-600 text-lg leading-relaxed mb-8 font-light">
+                        Su experiencia como madre se nota. No te habla desde un pedestal académico, te habla desde la <span class="text-brand-dark font-medium bg-brand-mocha/10 px-1">realidad de criar hoy en día.</span>
+                    </p>
+                    <div class="flex items-center gap-4 pt-6 border-t border-gray-100">
+                        <div class="w-12 h-12 bg-[#F0EEED] rounded-full flex items-center justify-center text-brand-dark text-sm font-bold tracking-tighter">AV</div>
+                        <div>
+                            <p class="text-base font-bold text-brand-dark font-serif">Andrea V.</p>
+                            <p class="text-xs text-brand-mocha font-bold tracking-widest uppercase">Machalí</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-white/70 pt-24 pb-10 rounded-t-[4rem] mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-20">
+                <div class="md:col-span-1">
+                    <h3 class="font-serif text-3xl text-white mb-8">Rosario Garrido.</h3>
+                    <p class="text-sm leading-relaxed mb-8 font-light">
+                        Psicología clínica y mediación familiar con enfoque humano, técnico y legal.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://instagram.com/serintegralmr" target="_blank" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-brand-dark transition-all duration-300">
+                            <i class="fab fa-instagram text-lg"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-brand-dark transition-all duration-300">
+                            <i class="fab fa-whatsapp text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="md:col-span-1">
+                    <h4 class="text-white font-serif text-lg mb-8">Servicios</h4>
+                    <ul class="space-y-4 text-sm font-light">
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><span class="w-1 h-1 bg-brand-mocha rounded-full"></span> Psicología Clínica</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><span class="w-1 h-1 bg-brand-mocha rounded-full"></span> Mediación Familiar</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><span class="w-1 h-1 bg-brand-mocha rounded-full"></span> Evaluación ADOS-2</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2"><span class="w-1 h-1 bg-brand-mocha rounded-full"></span> Telemedicina</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:col-span-1">
+                    <h4 class="text-white font-serif text-lg mb-8">Ubicación</h4>
+                    <p class="text-sm mb-2 text-white">Luco 505, Mostazal</p>
+                    <p class="text-sm text-gray-500 mb-6">Región de O'Higgins</p>
+                    <div class="mt-4 h-32 w-full bg-gray-800 rounded-2xl overflow-hidden relative group cursor-pointer">
+                        <div class="absolute inset-0 bg-gray-700 group-hover:scale-105 transition-transform duration-700"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-map-marked-alt text-2xl text-brand-mocha"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-1">
+                    <h4 class="text-white font-serif text-lg mb-8">Legal</h4>
+                    <p class="text-xs leading-relaxed text-gray-500 border-l border-white/10 pl-4">
+                        Servicios regulados bajo normativa vigente chilena.
+                        <br><br>
+                        Aviso de cumplimiento: <strong class="text-brand-mocha">Ley 21.719</strong> sobre responsabilidad parental y pago efectivo de pensiones de alimentos.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 font-medium tracking-wide">
+                <p>&copy; 2026 Rosario Garrido. Todos los derechos reservados.</p>
+                <p class="mt-2 md:mt-0">Diseñado con Estándares UX 2026</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Agendamiento -->
+    <div id="bookingModal" class="fixed inset-0 z-[60] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-[#1A1918]/90 transition-opacity backdrop-blur-md" aria-hidden="true" onclick="closeModal()"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-[#FAF9F6] rounded-[2rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-white/10 relative">
+                
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-mocha to-brand-mahogany"></div>
+                
+                <div class="bg-white px-8 pt-10 pb-8 relative">
+                    <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-brand-dark transition-colors bg-gray-50 rounded-full w-8 h-8 flex items-center justify-center">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    
+                    <div class="text-center">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-brand-mocha/10 text-brand-mocha mb-6">
+                            <i class="far fa-calendar-check text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl leading-6 font-serif text-brand-dark mb-4" id="modal-title">
+                            ¡Casi listo para tu sesión!
+                        </h3>
+                        <p class="text-gray-600 mb-8 font-light">
+                            Para confirmar tu cupo en mi agenda, por favor sigue el siguiente protocolo de compromiso:
+                        </p>
+                    </div>
+
+                    <div class="bg-brand-base p-6 rounded-2xl border border-brand-mocha/10 mb-8">
+                        <div class="flex items-start gap-4">
+                            <i class="fas fa-clock text-brand-mocha mt-1"></i>
+                            <div>
+                                <p class="text-sm text-brand-dark font-bold mb-1 uppercase tracking-wider">Política de 2 Horas</p>
+                                <p class="text-sm text-gray-600 leading-relaxed">
+                                    Realiza la transferencia y envía el comprobante a <strong class="text-brand-dark">mrosariogarridoi@gmail.com</strong> máximo 2 horas tras agendar.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 px-8 py-6 flex flex-col sm:flex-row-reverse gap-3 border-t border-gray-100">
+                    <a href="https://calendly.com/rosariogarrido" target="_blank" onclick="closeModal()" class="w-full inline-flex justify-center items-center rounded-full shadow-lg px-8 py-4 bg-brand-dark text-base font-bold text-white hover:bg-brand-mocha focus:outline-none transition-all duration-300">
+                        Entendido, ir a Calendly <i class="fas fa-external-link-alt ml-2"></i>
+                    </a>
+                    <button type="button" onclick="closeModal()" class="mt-3 w-full inline-flex justify-center items-center rounded-full border border-gray-200 shadow-sm px-6 py-4 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Modal Logic
+        const modal = document.getElementById('bookingModal');
+        
+        function openModal(type) {
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+
+        // Mobile Menu Logic
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Scroll Reveal Animation
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+
+        window.addEventListener("scroll", reveal);
+        reveal();
+
+        // Navbar blur effect on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-sm');
+            } else {
+                nav.classList.remove('shadow-sm');
+            }
+        });
+    </script>
+</body>
+</html>
