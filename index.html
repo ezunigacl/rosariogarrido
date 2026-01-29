@@ -134,6 +134,7 @@
                     <a href="#especialidades" class="text-brand-dark hover:text-brand-mocha transition-colors font-medium text-sm tracking-wide">ESPECIALIDADES</a>
                     <a href="#legal" class="text-brand-dark hover:text-brand-mocha transition-colors font-medium text-sm tracking-wide">LEGAL</a>
                     <a href="#valores" class="text-brand-dark hover:text-brand-mocha transition-colors font-medium text-sm tracking-wide">VALORES</a>
+                    <a href="#blog" class="text-brand-dark hover:text-brand-mocha transition-colors font-medium text-sm tracking-wide">BLOG</a>
                     <button onclick="openModal()" class="bg-brand-dark text-white px-7 py-3 rounded-full hover:bg-brand-mocha transition-all shadow-soft transform hover:-translate-y-0.5 font-medium text-sm tracking-wide">
                         Agendar Cita
                     </button>
@@ -155,6 +156,7 @@
                 <a href="#especialidades" class="block px-3 py-4 text-brand-dark font-medium border-b border-gray-100">Especialidades</a>
                 <a href="#legal" class="block px-3 py-4 text-brand-dark font-medium border-b border-gray-100">Legal</a>
                 <a href="#valores" class="block px-3 py-4 text-brand-dark font-medium border-b border-gray-100">Valores</a>
+                <a href="#blog" class="block px-3 py-4 text-brand-dark font-medium border-b border-gray-100">Blog</a>
                 <button onclick="openModal()" class="w-full text-left px-3 py-4 text-brand-mahogany font-bold mt-2">Agendar Ahora <i class="fas fa-arrow-right ml-2"></i></button>
             </div>
         </div>
@@ -551,12 +553,43 @@
                     <p class="text-xs text-white/40 mb-8">Requiere ser paciente activo</p>
                     <button onclick="openModal('clinica')" class="w-full py-3 rounded-xl border border-white/20 hover:bg-white hover:text-brand-dark transition-all font-medium text-sm">Consultar</button>
                 </div>
-            </div>
+            </div> <!-- Cierre del Grid de tarjetas -->
             
             <div class="mt-12 text-center reveal">
                 <p class="text-white/40 text-xs italic">
                     * Valores vigentes 2025-2026. Sujetos a confirmación al momento de agendar. Pagos vía transferencia electrónica.
                 </p>
+            </div>
+        </div> <!-- Cierre del contenedor max-w -->
+    </section> <!-- Cierre de la sección VALORES -->
+
+    <!-- 9. BLOG (NUEVA SECCIÓN TIPO CARRUSEL) -->
+    <section id="blog" class="py-32 bg-brand-base overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
+                <div class="max-w-2xl text-center md:text-left mb-6 md:mb-0">
+                    <span class="text-brand-mocha font-bold tracking-widest uppercase text-xs mb-4 block">Recursos y Reflexiones</span>
+                    <h2 class="font-serif text-4xl md:text-5xl text-brand-dark mb-2">Blog & <span class="italic text-brand-mahogany">Actualidad</span></h2>
+                    <p class="text-gray-500 text-sm font-light mt-4 max-w-lg">
+                        Artículos breves para orientarte en procesos legales y desafíos de crianza. Desliza para ver más.
+                    </p>
+                </div>
+                
+                <!-- Controles de Navegación del Carrusel -->
+                <div class="flex gap-4">
+                    <button onclick="scrollBlog('left')" class="w-12 h-12 rounded-full border border-brand-mocha/20 text-brand-mocha hover:bg-brand-mocha hover:text-white transition-all flex items-center justify-center">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button onclick="scrollBlog('right')" class="w-12 h-12 rounded-full border border-brand-mocha/20 text-brand-mocha hover:bg-brand-mocha hover:text-white transition-all flex items-center justify-center">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenedor Carrusel (Scroll Horizontal) -->
+            <!-- snap-x crea el efecto magnético al deslizar -->
+            <div id="blog-slider" class="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+                <!-- Los artículos se renderizan vía JS aquí -->
             </div>
         </div>
     </section>
@@ -713,9 +746,305 @@
         </div>
     </div>
 
+    <!-- Modal de Lectura de Blog -->
+    <div id="blogModal" class="hidden fixed inset-0 z-[70] overflow-y-auto" aria-labelledby="blog-modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Backdrop -->
+            <div class="fixed inset-0 bg-brand-dark/60 backdrop-blur-md transition-opacity" aria-hidden="true" onclick="closeBlogModal()"></div>
+            
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="relative inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full">
+                
+                <div class="bg-white relative">
+                    <button onclick="closeBlogModal()" class="absolute top-4 right-4 bg-gray-100 rounded-full p-2 text-gray-500 hover:bg-brand-mahogany hover:text-white transition-colors z-10">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    
+                    <!-- Contenido dinámico del artículo -->
+                    <div id="blog-content-area" class="max-h-[80vh] overflow-y-auto">
+                        <!-- Header de imagen simulado -->
+                        <div class="h-48 bg-brand-mocha/10 w-full flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                            <span id="blog-category-badge" class="relative z-10 bg-white text-brand-dark text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">Categoría</span>
+                        </div>
+                        
+                        <div class="p-8 sm:p-10">
+                            <p id="blog-date" class="text-sm text-gray-400 mb-2 font-medium">Fecha</p>
+                            <h2 id="blog-title" class="text-3xl font-serif text-brand-dark mb-6 leading-tight">Título del Artículo</h2>
+                            <div id="blog-body" class="prose prose-lg text-gray-600 font-light leading-relaxed">
+                                <!-- El texto se insertará aquí -->
+                            </div>
+                            
+                            <div class="mt-10 pt-8 border-t border-gray-100 flex justify-between items-center">
+                                <p class="text-xs text-gray-400">Escrito por Ps. Rosario Garrido</p>
+                                <button onclick="openModal()" class="text-brand-mocha font-bold text-sm hover:underline">Agendar una consulta relacionada</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script>
-        // Modal Logic
+        // --- DATA DEL BLOG (Contenido Real Proporcionado) ---
+        const articles = [
+            {
+                id: 1,
+                title: "Cálculo Pensión de Alimentos 2026",
+                category: "Legal",
+                date: "29 Enero, 2026",
+                preview: "¿Cómo calcular la pensión de alimentos en 2026? Conoce los montos mínimos según el sueldo de $539.000, la Ley 21.484 y la tasación del trabajo de cuidados.",
+                content: `
+                    <p class="mb-4 font-bold text-lg text-brand-dark">Cálculo pensión de alimentos Chile 2026: Todo lo que debes saber con el nuevo Sueldo Mínimo</p>
+                    <p class="mb-4">La fijación de una pensión de alimentos no es solo un trámite administrativo; es la garantía del bienestar integral de tus hijos. Sin embargo, el proceso suele generar angustia: ¿Cuánto es lo mínimo? ¿Qué pasa si el progenitor no tiene trabajo? ¿Se considera el tiempo que yo dedico a cuidarlos? En 2026, con la plena vigencia de la Ley 21.484 de Responsabilidad Parental, las reglas del juego han cambiado para proteger efectivamente el interés superior del niño.</p>
+                    <p class="mb-4">En este artículo, desglosamos los cálculos exactos basados en el Ingreso Mínimo Mensual (IMM) actual y cómo la justicia chilena hoy valora económicamente el cuidado diario.</p>
+                    
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">¿Cuál es el monto mínimo de la pensión de alimentos en 2026?</h3>
+                    <p class="mb-4">Desde enero de 2026, el Sueldo Mínimo en Chile (IMM) se sitúa en $539.000. Este valor es la base legal para determinar los porcentajes mínimos que un tribunal puede decretar. La ley establece dos escenarios principales:</p>
+                    <ul class="list-disc pl-5 mb-4 space-y-2">
+                        <li><strong>Si existe un solo hijo/a:</strong> El monto mínimo corresponde al 40% de un IMM, lo que equivale a $215.600 mensuales.</li>
+                        <li><strong>Si existen dos o más hijos/as:</strong> El monto por cada uno no puede ser inferior al 30% de un IMM, es decir, $161.700 por cada alimentario.</li>
+                    </ul>
+                    <p class="mb-4">Es fundamental comprender que estos son pisos mínimos. El juez evaluará la capacidad económica del alimentante y las necesidades reales del niño (salud, educación, recreación y vivienda) para fijar una cifra justa que puede superar largamente estos montos.</p>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">¿Qué es la Tasación Económica del Trabajo de Cuidados?</h3>
+                    <p class="mb-4">Uno de los avances más significativos de la Ley 21.484 es el reconocimiento del trabajo de cuidados. Históricamente, el progenitor que vivía con los hijos aportaba "tiempo y esfuerzo" que no se traducía en dinero, mientras que el otro solo aportaba una suma líquida.</p>
+                    <p class="mb-4">Hoy, el tribunal debe realizar una tasación económica de estas labores. Limpiar, cocinar, llevar a los hijos al colegio y brindar apoyo emocional tiene un valor monetario. Al calcular la pensión, el juez considera que quien ejerce el cuidado ya está realizando un aporte económico tangible, lo que equilibra la balanza financiera entre ambos padres.</p>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">Preguntas Frecuentes</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="font-bold text-brand-mocha">¿Existe la "pensión cero" si el padre o madre está cesante?</p>
+                            <p>No. Bajo la normativa actual, no existe la pensión cero. La ley presume que todo alimentante tiene los medios mínimos para aportar. La cesantía no es excusa para el incumplimiento.</p>
+                        </div>
+                        <div>
+                            <p class="font-bold text-brand-mocha">¿Cómo solicitar el reajuste de la pensión de alimentos?</p>
+                            <p>La pensión se reajusta automáticamente de acuerdo a la variación del IMM o del IPC. Si las necesidades del niño han aumentado, se debe solicitar un proceso de mediación previa para modificar el monto.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-base border-l-4 border-brand-mahogany p-4 mt-6">
+                        <p class="font-bold text-brand-dark">Conclusión: Hacia una justicia familiar equilibrada</p>
+                        <p class="text-sm">Navegar por el sistema legal y emocional del Derecho de Familia requiere un acompañamiento que entienda tanto los números como la psicología detrás de cada conflicto. Asegurar una pensión justa es el primer paso para la estabilidad de tu hogar.</p>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                title: "Protocolo Ley TEA en Colegios",
+                category: "Educación",
+                date: "29 Enero, 2026",
+                preview: "Conoce el protocolo de desregulación emocional bajo la Ley TEA y la Circular 586. Derechos de los padres, PAEC y prohibición de sanciones en Chile.",
+                content: `
+                    <p class="mb-4 font-bold text-lg text-brand-dark">Protocolo desregulación emocional Ley TEA colegios: Guía para padres y educadores</p>
+                    <p class="mb-4">Recibir una llamada del colegio informando que tu hijo o hija ha tenido una "crisis" puede ser una experiencia paralizante. Por años, el sistema escolar chileno respondió a las crisis sensoriales o emocionales con suspensiones o llamados de atención. Sin embargo, la Ley 21.545 (Ley TEA) y la Circular 586 de la Superintendencia de Educación han marcado un antes y un después en la protección de los estudiantes neurodivergentes.</p>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">El PAEC: ¿Qué es el Plan de Acompañamiento Emocional y Conductual?</h3>
+                    <p class="mb-4">Todos los establecimientos educacionales en Chile están obligados a implementar el PAEC. Este no es un simple documento, sino una estrategia personalizada que debe incluir:</p>
+                    <ul class="list-disc pl-5 mb-4 space-y-2">
+                        <li><strong>Identificación de detonantes:</strong> Qué situaciones estresan al estudiante.</li>
+                        <li><strong>Estrategias de regulación:</strong> Uso de espacios de calma, apoyos visuales o pausas sensoriales.</li>
+                        <li><strong>Protocolo de actuación:</strong> Pasos claros que el personal debe seguir durante una crisis, priorizando siempre la dignidad y la integridad física del menor.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">Prohibición de sanciones por crisis sensoriales</h3>
+                    <p class="mb-4">Es vital que los padres sepan que la Circular 586 prohíbe estrictamente sancionar disciplinariamente conductas que sean consecuencia de la condición de espectro autista. Una desregulación no es un "mal comportamiento" ni una falta a la convivencia escolar; es una manifestación de una barrera del entorno que el colegio debe ayudar a mitigar.</p>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">Derechos laborales para padres ante emergencias escolares</h3>
+                    <p class="mb-4">La Ley TEA también modificó el Código del Trabajo. Si tu hijo/a presenta una emergencia relacionada con su condición en el colegio, tienes derecho a:</p>
+                    <ul class="list-disc pl-5 mb-4 space-y-2">
+                        <li>Ausentarte de tu lugar de trabajo para acudir al establecimiento.</li>
+                        <li>Este tiempo se considera como trabajado para todos los efectos legales.</li>
+                        <li>Solo debes dar aviso a tu empleador y, posteriormente, acreditar la situación mediante una constancia del colegio o el diagnóstico médico.</li>
+                    </ul>
+
+                    <div class="bg-brand-base border-l-4 border-brand-mahogany p-4 mt-6">
+                        <p class="font-bold text-brand-dark">Conclusión: El bienestar emocional es un derecho</p>
+                        <p class="text-sm">La inclusión no es un favor que el colegio hace a tu familia, es un derecho consagrado por ley. Contar con un apoyo que una la psicología clínica con el conocimiento legal es clave para que estos derechos se respeten.</p>
+                    </div>
+                `
+            },
+            {
+                id: 3,
+                title: "Mediación Familiar Privada en O'Higgins",
+                category: "Mediación",
+                date: "29 Enero, 2026",
+                preview: "¿Buscas mediación familiar rápida en Rancagua, Machalí o Mostazal? Evita esperas y resuelve pensiones o visitas con validez legal inmediata.",
+                content: `
+                    <p class="mb-4 font-bold text-lg text-brand-dark">Mediación familiar privada rápida en O'Higgins: Resolución de conflictos sin esperas</p>
+                    <p class="mb-4">Cuando una relación termina o surge un conflicto por el cuidado de los hijos, el tiempo es el peor enemigo. En la Región de O'Higgins, el sistema de mediación pública suele estar saturado, con esperas que pueden superar los 90 días solo para la primera sesión. En este contexto, la mediación familiar privada aparece como la vía más eficiente y humana para alcanzar acuerdos.</p>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">¿Por qué elegir mediación privada en la Región de O'Higgins?</h3>
+                    <p class="mb-4">Si te encuentras en San Francisco de Mostazal, Graneros, Rancagua, Machalí o Rengo, sabes que la cercanía y la rapidez son fundamentales. Las ventajas de optar por un mediador privado son claras:</p>
+                    <ul class="list-disc pl-5 mb-4 space-y-2">
+                        <li><strong>Plazos reducidos:</strong> Mientras el sistema público puede tardar meses, en el ámbito privado podemos gestionar sesiones en 7 a 15 días.</li>
+                        <li><strong>Ambiente controlado:</strong> Las sesiones se realizan en un entorno empático y profesional, evitando la frialdad de las instituciones masivas.</li>
+                        <li><strong>Validez Legal:</strong> El Acta de Acuerdo redactada en mediación privada se sube al sistema del Poder Judicial y tiene la misma validez que una sentencia judicial.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">Cobertura local: Mostazal, Rengo, Machalí y Rancagua</h3>
+                    <p class="mb-4">Rosario Garrido ofrece un servicio especializado para las familias de la zona. Conozco la realidad local y las dinámicas de los tribunales de familia de la región, lo que permite redactar acuerdos que sean realistas y ejecutables.</p>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">¿Qué temas se pueden resolver?</h3>
+                    <ul class="list-disc pl-5 mb-4 space-y-2">
+                        <li>Pensión de Alimentos (Fijación, aumento o rebaja).</li>
+                        <li>Relación Directa y Regular (Régimen de visitas).</li>
+                        <li>Cuidado Personal (Tuición).</li>
+                        <li>Compensación Económica.</li>
+                    </ul>
+
+                    <div class="bg-brand-base border-l-4 border-brand-mahogany p-4 mt-6">
+                        <p class="font-bold text-brand-dark">Conclusión: El diálogo es el camino más corto</p>
+                        <p class="text-sm">No permitas que el conflicto se estanque en la burocracia. Un acuerdo construido desde la mediación es mucho más sostenible en el tiempo que una imposición del juez.</p>
+                    </div>
+                `
+            },
+            {
+                id: 4,
+                title: "Diagnóstico Gold Standard (ADOS-2 y WISC-V)",
+                category: "Psicología",
+                date: "29 Enero, 2026",
+                preview: "Entiende el diagnóstico Gold Standard para autismo: ADOS-2 y WISC-V. Cómo un informe de calidad asegura apoyos escolares y beneficios estatales.",
+                content: `
+                    <p class="mb-4 font-bold text-lg text-brand-dark">Diagnóstico autismo ADOS-2 Gold Standard Chile: La importancia de la precisión clínica</p>
+                    <p class="mb-4">Un diagnóstico no es una etiqueta, es una brújula. Para las familias que sospechan que su hijo o hija está en el espectro autista, obtener un informe certero es el primer paso para acceder a un mundo de apoyos. En Chile, el estándar de excelencia o "Gold Standard" lo componen el ADOS-2 y el WISC-V.</p>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">¿Qué es el diagnóstico Gold Standard?</h3>
+                    <p class="mb-4">No basta con una observación clínica rápida. Un diagnóstico serio requiere de herramientas validadas internacionalmente:</p>
+                    <ul class="list-disc pl-5 mb-4 space-y-2">
+                        <li><strong>ADOS-2 (Escala de Observación para el Diagnóstico del Autismo):</strong> Es una evaluación estandarizada donde el profesional interactúa con el niño a través de juegos o actividades sociales para observar comunicación y conductas específicas.</li>
+                        <li><strong>WISC-V (Escala de Inteligencia de Wechsler):</strong> Es fundamental para comprender el perfil cognitivo del niño, sus fortalezas y sus desafíos de procesamiento, lo cual es vital para las adecuaciones curriculares.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">El Informe: La llave para beneficios estatales y el PIE</h3>
+                    <p class="mb-4">Un informe de calidad bajo estos estándares es la herramienta necesaria para:</p>
+                    <ul class="list-disc pl-5 mb-4 space-y-2">
+                        <li><strong>Ingreso al Programa de Integración Escolar (PIE):</strong> Los colegios requieren evidencia técnica para asignar recursos y especialistas.</li>
+                        <li><strong>Credencial de Discapacidad (COMPIN):</strong> Permite acceder a beneficios arancelarios, apoyos del SENADIS y protección legal ampliada.</li>
+                        <li><strong>Tratamientos específicos:</strong> Las Isapres y Fonasa requieren códigos y diagnósticos precisos para las coberturas de fonoaudiología y terapia ocupacional.</li>
+                    </ul>
+
+                    <div class="bg-brand-base border-l-4 border-brand-mahogany p-4 mt-6">
+                        <p class="font-bold text-brand-dark">Conclusión: Invertir en certeza es ganar tiempo</p>
+                        <p class="text-sm">Un diagnóstico vago solo retrasa la intervención adecuada. Asegurar que tu hijo cuente con evaluaciones de estándar internacional es la mejor inversión para su desarrollo futuro.</p>
+                    </div>
+                `
+            },
+            {
+                id: 5,
+                title: "Crisis de Salud Mental a los 12 años",
+                category: "Psicología",
+                date: "29 Enero, 2026",
+                preview: "La transición a los 12 años es crítica en Chile. Conoce las señales de alerta ante la ansiedad y depresión adolescente post-pandemia.",
+                content: `
+                    <p class="mb-4 font-bold text-lg text-brand-dark">Salud mental adolescentes 12 años Chile: Navegando la transición más crítica</p>
+                    <p class="mb-4">Los 12 años marcan una frontera invisible pero poderosa. En Chile, esta edad coincide con el paso de la educación básica a la enseñanza media y el inicio de la pubertad biológica. Las estadísticas son preocupantes: el 60% de los menores en Chile presenta síntomas de ansiedad o depresión tras la pandemia, y los 12 años es el punto estadístico de mayor riesgo para la deserción escolar y las crisis de identidad.</p>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">¿Por qué los 12 años son el "punto de quiebre"?</h3>
+                    <p class="mb-4">A esta edad, el cerebro adolescente atraviesa una reestructuración masiva. Si a esto sumamos el estrés del entorno escolar chileno y las secuelas de la desconexión social post-2020, nos encontramos ante una "tormenta perfecta". Los padres suelen notar que su hijo/a "ya no es el mismo/a", interpretando los cambios solo como "rebeldía", cuando a menudo hay una crisis de salud mental subyacente.</p>
+
+                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">Señales de alerta para padres</h3>
+                    <p class="mb-4">Es fundamental estar atentos a los cambios sutiles antes de que se conviertan en crisis profundas:</p>
+                    <ul class="list-disc pl-5 mb-4 space-y-2">
+                        <li><strong>Aislamiento extremo:</strong> Más allá de la necesidad de privacidad, el rechazo total a interactuar con la familia o amigos.</li>
+                        <li><strong>Alteraciones del sueño y apetito:</strong> Dormir demasiado o tener insomnio persistente.</li>
+                        <li><strong>Bajo rendimiento repentino:</strong> La pérdida de interés en los estudios suele ser un síntoma de depresión, no de flojera.</li>
+                        <li><strong>Irritabilidad desproporcionada:</strong> Reacciones de ira que ocultan una profunda tristeza o ansiedad.</li>
+                    </ul>
+
+                    <div class="bg-brand-base border-l-4 border-brand-mahogany p-4 mt-6">
+                        <p class="font-bold text-brand-dark">Conclusión: No es solo "una etapa"</p>
+                        <p class="text-sm">Ignorar el malestar emocional de un preadolescente bajo la premisa de que "ya se le pasará" es un riesgo alto. Validar sus sentimientos y buscar apoyo profesional es un acto de amor y prevención legal.</p>
+                    </div>
+                `
+            }
+        ];
+
+        // --- LÓGICA DEL BLOG ---
+        function renderBlog() {
+            const slider = document.getElementById('blog-slider');
+            if (!slider) return;
+
+            // Generar Schema.org para SEO (Ayuda a Google a entender que son artículos)
+            const schemaData = {
+                "@context": "https://schema.org",
+                "@type": "Blog",
+                "blogPost": articles.map(a => ({
+                    "@type": "BlogPosting",
+                    "headline": a.title,
+                    "datePublished": a.date,
+                    "description": a.preview,
+                    "author": {
+                        "@type": "Person",
+                        "name": "Rosario Garrido"
+                    }
+                }))
+            };
+            const script = document.createElement('script');
+            script.type = "application/ld+json";
+            script.text = JSON.stringify(schemaData);
+            document.head.appendChild(script);
+
+            // Renderizar Tarjetas
+            slider.innerHTML = articles.map(article => `
+                <div class="min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group cursor-pointer flex flex-col h-auto" onclick="openArticle(${article.id})">
+                    <div class="mb-6">
+                        <span class="bg-brand-base text-brand-mocha text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-brand-mocha/10">${article.category}</span>
+                    </div>
+                    <h3 class="text-2xl font-serif text-brand-dark mb-3 group-hover:text-brand-mahogany transition-colors leading-tight">${article.title}</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6 line-clamp-3 flex-grow">${article.preview}</p>
+                    <div class="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
+                        <span class="text-xs text-gray-400 font-medium">${article.date}</span>
+                        <span class="w-8 h-8 rounded-full bg-brand-base flex items-center justify-center text-brand-dark group-hover:bg-brand-dark group-hover:text-white transition-all">
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Lógica de Scroll para botones
+        function scrollBlog(direction) {
+            const slider = document.getElementById('blog-slider');
+            const scrollAmount = 400; // Ancho aproximado de tarjeta + gap
+            if (direction === 'left') {
+                slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        
+        function openArticle(id) {
+            const article = articles.find(a => a.id === id);
+            if (!article) return;
+
+            // Rellenar contenido del modal (Simulando el contenido completo si no existe en la data de ejemplo)
+            const fullContent = article.content.length > 50 ? article.content : `<p class="mb-4 text-lg text-gray-600">${article.preview}</p><p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p><h3 class="text-xl font-serif font-bold text-brand-dark mb-3">Profundizando en el tema</h3><p class="mb-4">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>`;
+
+            document.getElementById('blog-title').innerText = article.title;
+            document.getElementById('blog-date').innerText = article.date;
+            document.getElementById('blog-body').innerHTML = fullContent;
+            document.getElementById('blog-category-badge').innerText = article.category;
+            
+            const modal = document.getElementById('blogModal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBlogModal() {
+            const modal = document.getElementById('blogModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Inicializar Blog al cargar
+        document.addEventListener('DOMContentLoaded', renderBlog);
+
+
+        // --- MODAL AGENDAMIENTO (Lógica Existente) ---
         const modal = document.getElementById('bookingModal');
         
         function openModal(type) {
@@ -737,6 +1066,7 @@
         document.addEventListener('keydown', function(event) {
             if (event.key === "Escape") {
                 closeModal();
+                closeBlogModal();
             }
         });
 
@@ -744,9 +1074,11 @@
         const btn = document.getElementById('mobile-menu-btn');
         const menu = document.getElementById('mobile-menu');
 
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-        });
+        if (btn && menu) {
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
 
         // Scroll Reveal Animation
         function reveal() {
@@ -764,7 +1096,7 @@
         }
 
         window.addEventListener("scroll", reveal);
-        reveal();
+        reveal(); // Trigger once on load
 
         // Navbar blur effect on scroll
         window.addEventListener('scroll', () => {
