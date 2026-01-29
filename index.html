@@ -256,10 +256,16 @@
                     </div>
                     
                     <div class="mt-12 flex flex-wrap gap-8">
-                        <div class="flex items-center gap-3">
-                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-mocha/10 text-brand-mocha text-xs"><i class="fas fa-certificate"></i></span>
-                            <span class="text-sm font-bold uppercase tracking-widest text-brand-dark">Psicóloga Clínica</span>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-mocha/10 text-brand-mocha text-xs"><i class="fas fa-certificate"></i></span>
+                                <span class="text-sm font-bold uppercase tracking-widest text-brand-dark">Psicóloga Clínica</span>
+                            </div>
+                            <a href="https://rnpi.superdesalud.gob.cl/#" target="_blank" class="text-xs text-gray-500 hover:text-brand-mocha ml-11 flex items-center gap-1 transition-colors group/link" title="Verificar en Superintendencia de Salud">
+                                <i class="fas fa-external-link-alt text-[10px] opacity-50 group-hover/link:opacity-100"></i> Reg. SIS: 515753
+                            </a>
                         </div>
+                        
                         <div class="flex items-center gap-3">
                             <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-mahogany/10 text-brand-mahogany text-xs"><i class="fas fa-gavel"></i></span>
                             <span class="text-sm font-bold uppercase tracking-widest text-brand-dark">Mediadora Familiar</span>
@@ -400,20 +406,35 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-brand-dark text-white/70 pt-24 pb-10 rounded-t-[4rem] mt-12">
+    <footer class="bg-brand-dark text-white/70 pt-24 pb-10 rounded-t-[4rem] mt-12 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-12 mb-20">
                 <div class="md:col-span-1">
-                    <h3 class="font-serif text-3xl text-white mb-8">Rosario Garrido.</h3>
-                    <p class="text-sm leading-relaxed mb-8 font-light">
+                    <h3 class="font-serif text-3xl text-white mb-6">Rosario Garrido.</h3>
+                    <p class="text-sm leading-relaxed mb-6 font-light">
                         Psicología clínica y mediación familiar con enfoque humano, técnico y legal.
                     </p>
-                    <div class="flex space-x-4">
-                        <a href="https://instagram.com/serintegralmr" target="_blank" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-brand-dark transition-all duration-300">
-                            <i class="fab fa-instagram text-lg"></i>
+                    
+                    <!-- Nueva Sección de Contacto Directo -->
+                    <div class="space-y-3 mb-8">
+                        <a href="mailto:rosario@rosariogarrido.cl" class="flex items-center gap-3 text-sm hover:text-white transition-colors group">
+                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-brand-mocha transition-colors">
+                                <i class="fas fa-envelope text-xs"></i>
+                            </div>
+                            <span class="border-b border-transparent group-hover:border-white/50 transition-all">rosario@rosariogarrido.cl</span>
                         </a>
-                        <a href="#" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-brand-dark transition-all duration-300">
-                            <i class="fab fa-whatsapp text-lg"></i>
+                        <!-- Botón Whatsapp en lista -->
+                        <a href="https://wa.me/56992825696" target="_blank" class="flex items-center gap-3 text-sm hover:text-white transition-colors group">
+                             <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-colors">
+                                <i class="fab fa-whatsapp text-xs"></i>
+                            </div>
+                            <span class="border-b border-transparent group-hover:border-white/50 transition-all">+56 9 XXXX XXXX</span>
+                        </a>
+                    </div>
+
+                    <div class="flex space-x-4">
+                        <a href="https://instagram.com/serintegralmr" target="_blank" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-brand-dark transition-all duration-300">
+                            <i class="fab fa-instagram text-sm"></i>
                         </a>
                     </div>
                 </div>
@@ -445,6 +466,8 @@
                     <p class="text-xs leading-relaxed text-gray-500 border-l border-white/10 pl-4">
                         Servicios regulados bajo normativa vigente chilena.
                         <br><br>
+                        Registro Prestador Individual (SIS): <a href="https://rnpi.superdesalud.gob.cl/#" target="_blank" class="text-brand-mocha hover:text-white transition-colors border-b border-brand-mocha/30 hover:border-white">Nº 515753</a>
+                        <br><br>
                         Aviso de cumplimiento: <strong class="text-brand-mocha">Ley 21.719</strong> sobre responsabilidad parental y pago efectivo de pensiones de alimentos.
                     </p>
                 </div>
@@ -457,49 +480,73 @@
         </div>
     </footer>
 
+    <!-- Botón Flotante de WhatsApp -->
+    <a href="https://wa.me/56992825696" target="_blank" class="fixed bottom-6 right-6 z-40 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:shadow-2xl hover:scale-110 transition-all duration-300 flex items-center gap-2 group border-4 border-white/20">
+        <i class="fab fa-whatsapp text-3xl"></i>
+        <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 ease-in-out whitespace-nowrap font-bold text-sm">¡Hablemos!</span>
+    </a>
+
     <!-- Modal de Agendamiento -->
-    <div id="bookingModal" class="fixed inset-0 z-[60] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-[#1A1918]/90 transition-opacity backdrop-blur-md" aria-hidden="true" onclick="closeModal()"></div>
-
+    <div id="bookingModal" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Backdrop -->
+            <div class="fixed inset-0 bg-brand-dark/40 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="closeModal()"></div>
+            
+            <!-- Panel -->
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <div class="inline-block align-bottom bg-[#FAF9F6] rounded-[2rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-white/10 relative">
+            <div class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 
-                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-mocha to-brand-mahogany"></div>
-                
-                <div class="bg-white px-8 pt-10 pb-8 relative">
-                    <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-brand-dark transition-colors bg-gray-50 rounded-full w-8 h-8 flex items-center justify-center">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    
-                    <div class="text-center">
-                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-brand-mocha/10 text-brand-mocha mb-6">
-                            <i class="far fa-calendar-check text-2xl"></i>
-                        </div>
-                        <h3 class="text-2xl leading-6 font-serif text-brand-dark mb-4" id="modal-title">
-                            ¡Casi listo para tu sesión!
-                        </h3>
-                        <p class="text-gray-600 mb-8 font-light">
-                            Para confirmar tu cupo en mi agenda, por favor sigue el siguiente protocolo de compromiso:
-                        </p>
-                    </div>
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-2xl leading-6 font-serif font-medium text-brand-dark mb-4" id="modal-title">¡Casi listo para tu sesión!</h3>
+                            
+                            <!-- Política de 2 Horas -->
+                            <div class="bg-brand-base p-6 rounded-2xl border border-brand-mocha/10 mb-6">
+                                <div class="flex items-start gap-4">
+                                    <i class="fas fa-clock text-brand-mocha mt-1"></i>
+                                    <div>
+                                        <p class="text-sm text-brand-dark font-bold mb-1 uppercase tracking-wider">Política de 2 Horas</p>
+                                        <p class="text-sm text-gray-600 leading-relaxed">
+                                            Realiza la transferencia y envía el comprobante a <strong class="text-brand-dark">pagos@rosariogarrido.cl</strong> máximo 2 horas tras agendar.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="bg-brand-base p-6 rounded-2xl border border-brand-mocha/10 mb-8">
-                        <div class="flex items-start gap-4">
-                            <i class="fas fa-clock text-brand-mocha mt-1"></i>
-                            <div>
-                                <p class="text-sm text-brand-dark font-bold mb-1 uppercase tracking-wider">Política de 2 Horas</p>
-                                <p class="text-sm text-gray-600 leading-relaxed">
-                                    Realiza la transferencia y envía el comprobante a <strong class="text-brand-dark">mrosariogarridoi@gmail.com</strong> máximo 2 horas tras agendar.
-                                </p>
+                            <!-- Datos Bancarios Integrados -->
+                            <div class="border-t border-gray-100 pt-6">
+                                <h4 class="text-brand-dark font-serif text-lg mb-3">Datos de Transferencia</h4>
+                                <div class="grid grid-cols-1 gap-y-2 text-sm">
+                                    <div class="flex justify-between border-b border-gray-50 pb-1">
+                                        <span class="text-gray-500">Banco</span>
+                                        <span class="font-bold text-brand-dark">Banco Estado</span>
+                                    </div>
+                                    <div class="flex justify-between border-b border-gray-50 pb-1">
+                                        <span class="text-gray-500">Tipo de Cuenta</span>
+                                        <span class="font-bold text-brand-dark">Cuenta Vista / RUT</span>
+                                    </div>
+                                    <div class="flex justify-between border-b border-gray-50 pb-1">
+                                        <span class="text-gray-500">Nº Cuenta</span>
+                                        <span class="font-bold text-brand-dark font-mono">17599722</span>
+                                    </div>
+                                    <div class="flex justify-between border-b border-gray-50 pb-1">
+                                        <span class="text-gray-500">RUT</span>
+                                        <span class="font-bold text-brand-dark font-mono">17.599.722-9</span>
+                                    </div>
+                                    <div class="flex justify-between pt-1">
+                                        <span class="text-gray-500">Correo</span>
+                                        <span class="font-bold text-brand-dark">pagos@rosariogarrido.cl</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
+                <!-- Botones del Modal -->
                 <div class="bg-gray-50 px-8 py-6 flex flex-col sm:flex-row-reverse gap-3 border-t border-gray-100">
-                    <a href="https://calendly.com/mrosariogarridoi" target="_blank" onclick="closeModal()" class="w-full inline-flex justify-center items-center rounded-full shadow-lg px-8 py-4 bg-brand-dark text-base font-bold text-white hover:bg-brand-mocha focus:outline-none transition-all duration-300">
+                    <a href="https://calendly.com/rosariogarridoi" target="_blank" onclick="closeModal()" class="w-full inline-flex justify-center items-center rounded-full shadow-lg px-8 py-4 bg-brand-dark text-base font-bold text-white hover:bg-brand-mocha focus:outline-none transition-all duration-300">
                         Entendido, ir a Calendly <i class="fas fa-external-link-alt ml-2"></i>
                     </a>
                     <button type="button" onclick="closeModal()" class="mt-3 w-full inline-flex justify-center items-center rounded-full border border-gray-200 shadow-sm px-6 py-4 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto">
@@ -516,13 +563,19 @@
         const modal = document.getElementById('bookingModal');
         
         function openModal(type) {
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                console.error("No se encontró el modal con ID 'bookingModal'");
+            }
         }
 
         function closeModal() {
-            modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
         }
 
         document.addEventListener('keydown', function(event) {
