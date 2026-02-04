@@ -2,14 +2,14 @@
 <html lang="es" class="scroll-smooth">
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-66G4X3VYJ1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-66G4X3VYJ1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-66G4X3VYJ1');
-</script>
+      gtag('config', 'G-66G4X3VYJ1');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rosario Garrido | Psicología y Mediación Familiar</title>
@@ -85,10 +85,35 @@
             transform: translateY(0);
         }
 
-        /* FIX DEL FLICKERING (TIBILITEO):
-           Eliminamos el cambio de ancho (flex-grow) y usamos 
-           opacidad y escala de imagen de fondo para el efecto.
-        */
+        /* Efecto Metalizado Sutil (Premium/Value) */
+        .metallic-surface {
+            /* Degradado en diagonal para simular reflejo de luz (Sheen) */
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.03) 48%, rgba(255,255,255,0.03) 52%, rgba(255,255,255,0.15) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            /* Bordes superiores e izquierdos más claros para efecto biselado (luz) */
+            border-top-color: rgba(255, 255, 255, 0.4); 
+            border-left-color: rgba(255, 255, 255, 0.3);
+            /* Sombras complejas: Sombra externa + Brillo interno cálido (Gold hint) */
+            box-shadow: 
+                0 15px 40px -10px rgba(0,0,0,0.5),
+                inset 0 0 0 1px rgba(255,255,255,0.05),
+                inset 0 0 60px rgba(164, 120, 100, 0.08); /* Toque cálido sutil */
+        }
+
+        /* Efecto Metalizado Acentuado (Para la tarjeta Mahogany) */
+        .metallic-surface-accent {
+            background: linear-gradient(135deg, #7A2E2A 0%, #682623 50%, #7A2E2A 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top-color: rgba(255, 255, 255, 0.5);
+            border-left-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 25px 50px -15px rgba(0,0,0,0.6),
+                inset 0 0 40px rgba(255,255,255,0.1); /* Brillo metálico sobre el rojo */
+        }
+
+        /* FIX DEL FLICKERING (TIBILITEO): */
         .split-container {
             overflow: hidden;
         }
@@ -97,26 +122,22 @@
             transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* Fondo decorativo sutil para hover */
         .split-bg-hover {
             opacity: 0;
             transition: opacity 0.6s ease;
         }
 
         @media (min-width: 768px) {
-            /* Cuando hago hover en el contenedor, oscurezco LIGERAMENTE ambos */
             .split-container:hover .split-section {
                 opacity: 0.5;
-                filter: grayscale(40%); /* Desaturar lo que no estoy mirando */
+                filter: grayscale(40%); 
             }
             
-            /* Cuando hago hover en UNA sección específica, la resalto */
             .split-container .split-section:hover {
                 opacity: 1;
                 filter: grayscale(0%);
                 z-index: 10;
-                /* Eliminado el flex: 1.2 que causaba el salto */
-                transform: scale(1.02); /* Zoom muy sutil a todo el bloque */
+                transform: scale(1.02); 
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
             }
         }
@@ -127,8 +148,7 @@
     <!-- Sticky Navigation (H1 SEO Optimized) -->
     <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-24"> <!-- Navbar un poco más alto para elegancia -->
-                <!-- Logo como H1 para SEO -->
+            <div class="flex justify-between items-center h-24">
                 <div class="flex-shrink-0 flex items-center">
                     <h1 class="m-0 p-0 leading-none">
                         <a href="#" class="font-serif text-3xl text-brand-mahogany tracking-tight hover:opacity-80 transition-opacity">
@@ -137,7 +157,6 @@
                     </h1>
                 </div>
 
-                <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 items-center">
                     <a href="#historia" class="text-brand-dark hover:text-brand-mocha transition-colors font-medium text-sm tracking-wide">MI HISTORIA</a>
                     <a href="#especialidades" class="text-brand-dark hover:text-brand-mocha transition-colors font-medium text-sm tracking-wide">ESPECIALIDADES</a>
@@ -149,7 +168,6 @@
                     </button>
                 </div>
 
-                <!-- Mobile Menu Button -->
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-btn" class="text-brand-dark focus:outline-none p-2">
                         <i class="fas fa-bars text-2xl"></i>
@@ -158,7 +176,6 @@
             </div>
         </div>
         
-        <!-- Mobile Menu Panel -->
         <div id="mobile-menu" class="hidden md:hidden bg-[#FAF9F6] border-t border-gray-100 absolute w-full shadow-xl">
             <div class="px-4 pt-2 pb-6 space-y-2">
                 <a href="#historia" class="block px-3 py-4 text-brand-dark font-medium border-b border-gray-100">Mi Historia</a>
@@ -171,7 +188,7 @@
         </div>
     </nav>
 
-    <!-- 1. HERO (Títulos cambiados a H2 para SEO) -->
+    <!-- 1. HERO -->
     <header class="relative pt-24 md:pt-0 min-h-screen flex flex-col md:flex-row split-container bg-brand-base">
         <!-- Izquierda: Clínica -->
         <div class="split-section relative w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 border-b md:border-b-0 md:border-r border-gray-200 overflow-hidden">
@@ -252,7 +269,7 @@
         </div>
     </section>
 
-    <!-- 3. REGIONAL (MOVIDO AQUÍ - Entre Proceso y Historia) -->
+    <!-- 3. REGIONAL -->
     <section id="regional" class="py-16 bg-brand-mocha text-white relative overflow-hidden">
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
         <div class="max-w-6xl mx-auto px-4 relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
@@ -275,7 +292,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-12 gap-16 items-center">
                 
-                <!-- Foto Profesional (rosariogarrido.jpeg confirmado) -->
+                <!-- Foto Profesional -->
                 <div class="md:col-span-5 relative reveal group">
                     <div class="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl transition-transform duration-700 group-hover:scale-[1.02]">
                         <img src="rosariogarrido.jpeg" 
@@ -498,7 +515,7 @@
         </div>
     </section>
 
-    <!-- 8. VALORES -->
+    <!-- 8. VALORES (CON EFECTO METALIZADO SUTIL) -->
     <section id="valores" class="py-24 bg-brand-dark text-white relative overflow-hidden">
         <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-brand-mahogany/20 rounded-full blur-3xl"></div>
         <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-brand-lavender/10 rounded-full blur-3xl"></div>
@@ -512,62 +529,66 @@
                 </p>
             </div>
 
+            <!-- GRID TARJETAS MEJORADO CON BRILLO -->
             <div class="grid md:grid-cols-3 gap-6">
-                <!-- Tarjeta 1: Psicología -->
-                <div class="bg-white/5 border border-white/10 rounded-[2rem] p-8 hover:bg-white/10 transition-all duration-300 reveal group">
+                
+                <!-- Tarjeta 1: Psicología (Metalizado Plata/Off-White) -->
+                <div class="metallic-surface rounded-[2rem] p-8 hover:-translate-y-1 transition-all duration-500 reveal group">
                     <div class="mb-6 flex items-center justify-between">
                         <i class="fas fa-brain text-2xl text-brand-lavender"></i>
                         <span class="text-xs font-bold bg-brand-lavender/20 text-brand-lavender px-3 py-1 rounded-full uppercase">Clínica</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Terapia Psicológica</h3>
-                    <p class="text-white/50 text-sm mb-6 h-10">Espacio individual para niños, adolescentes y adultos.</p>
-                    <!-- PEGAR ESTO EN SU LUGAR -->
+                    <h3 class="text-xl font-bold mb-2 text-white">Terapia Psicológica</h3>
+                    <p class="text-white/70 text-sm mb-6 h-10">Espacio individual para niños, adolescentes y adultos.</p>
+                    
+                    <!-- Precios diferenciados -->
                     <div class="mb-4 space-y-2">
-                        <div class="flex justify-between items-baseline border-b border-white/10 pb-2">
-                            <span class="text-white/70 text-sm">Online</span>
+                        <div class="flex justify-between items-baseline border-b border-white/20 pb-2">
+                            <span class="text-white/90 text-sm">Online</span>
                             <span class="text-2xl font-serif text-white">$35.000</span>
                         </div>
                         <div class="flex justify-between items-baseline pt-1">
-                            <span class="text-white/70 text-sm">Presencial</span>
+                            <span class="text-white/90 text-sm">Presencial</span>
                             <span class="text-2xl font-serif text-white">$40.000</span>
                         </div>
                     </div>
-                    <p class="text-xs text-white/40 mb-8">Reembolsable Isapre / Seguros</p>
-                    <button onclick="openModal('clinica')" class="w-full py-3 rounded-xl border border-white/20 hover:bg-white hover:text-brand-dark transition-all font-medium text-sm">Agendar Hora</button>
+                    
+                    <p class="text-xs text-white/50 mb-8">Reembolsable Isapre / Seguros</p>
+                    <button onclick="openModal('clinica')" class="w-full py-3 rounded-xl border border-white/30 hover:bg-white hover:text-brand-dark transition-all font-medium text-sm">Agendar Hora</button>
                 </div>
 
-                <!-- Tarjeta 2: Mediación (Destacada) -->
-                <div class="bg-brand-mahogany rounded-[2rem] p-8 transform md:-translate-y-4 shadow-2xl border border-white/10 relative reveal" style="transition-delay: 100ms;">
+                <!-- Tarjeta 2: Mediación (Metalizado Cobre/Mahogany) -->
+                <div class="metallic-surface-accent rounded-[2rem] p-8 transform md:-translate-y-4 relative reveal" style="transition-delay: 100ms;">
                     <div class="absolute top-4 right-4">
                         <span class="bg-white text-brand-mahogany text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Legal</span>
                     </div>
                     <div class="mb-6">
                         <i class="fas fa-balance-scale text-3xl text-white"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Mediación Familiar</h3>
-                    <p class="text-white/70 text-sm mb-6 h-10">Sesión de mediación privada con validez legal.</p>
+                    <h3 class="text-xl font-bold mb-2 text-white">Mediación Familiar</h3>
+                    <p class="text-white/80 text-sm mb-6 h-10">Sesión de mediación privada con validez legal.</p>
                     <div class="flex items-baseline gap-1 mb-2">
                         <span class="text-4xl font-serif text-white">$50.000</span>
-                        <span class="text-sm text-white/70">/ sesión</span>
+                        <span class="text-sm text-white/80">/ sesión</span>
                     </div>
-                    <p class="text-xs text-white/80 mb-8 font-medium">+ $50.000 Emisión de Acta (Acuerdo o Frustrada)</p>
+                    <p class="text-xs text-white/90 mb-8 font-medium">+ $50.000 Emisión de Acta (Acuerdo o Frustrada)</p>
                     <button onclick="openModal('mediacion')" class="w-full py-3 rounded-xl bg-white text-brand-mahogany hover:bg-gray-100 transition-all font-bold text-sm shadow-lg">Solicitar Mediación</button>
                 </div>
 
-                <!-- Tarjeta 3: Informes (Reemplazo de ADOS-2) -->
-                <div class="bg-white/5 border border-white/10 rounded-[2rem] p-8 hover:bg-white/10 transition-all duration-300 reveal group" style="transition-delay: 200ms;">
+                <!-- Tarjeta 3: Informes (Metalizado Plata/Off-White) -->
+                <div class="metallic-surface rounded-[2rem] p-8 hover:-translate-y-1 transition-all duration-500 reveal group" style="transition-delay: 200ms;">
                     <div class="mb-6 flex items-center justify-between">
                         <i class="fas fa-file-alt text-2xl text-brand-mocha"></i>
                         <span class="text-xs font-bold bg-brand-mocha/20 text-brand-mocha px-3 py-1 rounded-full uppercase">Documentos</span>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Informes Psicológicos</h3>
-                    <p class="text-white/50 text-sm mb-6 h-10">Informes de proceso clínico para colegios o especialistas.</p>
+                    <h3 class="text-xl font-bold mb-2 text-white">Informes Psicológicos</h3>
+                    <p class="text-white/70 text-sm mb-6 h-10">Informes de proceso clínico para colegios o especialistas.</p>
                     <div class="flex items-baseline gap-1 mb-2">
                         <span class="text-4xl font-serif text-white">$35.000</span>
-                        <span class="text-sm text-white/50">/ informe</span>
+                        <span class="text-sm text-white/70">/ informe</span>
                     </div>
-                    <p class="text-xs text-white/40 mb-8">Requiere ser paciente activo</p>
-                    <button onclick="openModal('clinica')" class="w-full py-3 rounded-xl border border-white/20 hover:bg-white hover:text-brand-dark transition-all font-medium text-sm">Consultar</button>
+                    <p class="text-xs text-white/50 mb-8">Requiere ser paciente activo</p>
+                    <button onclick="openModal('clinica')" class="w-full py-3 rounded-xl border border-white/30 hover:bg-white hover:text-brand-dark transition-all font-medium text-sm">Consultar</button>
                 </div>
             </div> <!-- Cierre del Grid de tarjetas -->
             
@@ -579,7 +600,7 @@
         </div> <!-- Cierre del contenedor max-w -->
     </section> <!-- Cierre de la sección VALORES -->
 
-    <!-- 9. BLOG (NUEVA SECCIÓN TIPO CARRUSEL) -->
+    <!-- 9. BLOG -->
     <section id="blog" class="py-32 bg-brand-base overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
@@ -602,8 +623,7 @@
                 </div>
             </div>
 
-            <!-- Contenedor Carrusel (Scroll Horizontal) -->
-            <!-- snap-x crea el efecto magnético al deslizar -->
+            <!-- Contenedor Carrusel -->
             <div id="blog-slider" class="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
                 <!-- Los artículos se renderizan vía JS aquí -->
             </div>
@@ -620,7 +640,6 @@
                         Psicología clínica y mediación familiar con enfoque humano, técnico y legal.
                     </p>
                     
-                    <!-- Nueva Sección de Contacto Directo -->
                     <div class="space-y-3 mb-8">
                         <a href="mailto:rosario@rosariogarrido.cl" class="flex items-center gap-3 text-sm hover:text-white transition-colors group">
                             <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-brand-mocha transition-colors">
@@ -628,7 +647,6 @@
                             </div>
                             <span class="border-b border-transparent group-hover:border-white/50 transition-all">rosario@rosariogarrido.cl</span>
                         </a>
-                        <!-- Botón Whatsapp en lista (ACTUALIZADO) -->
                         <a href="https://wa.me/56992825696" target="_blank" class="flex items-center gap-3 text-sm hover:text-white transition-colors group">
                              <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-colors">
                                 <i class="fab fa-whatsapp text-xs"></i>
@@ -685,7 +703,7 @@
         </div>
     </footer>
 
-    <!-- Botón Flotante de WhatsApp (ACTUALIZADO) -->
+    <!-- Botón Flotante de WhatsApp -->
     <a href="https://wa.me/56992825696" target="_blank" class="fixed bottom-6 right-6 z-40 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:shadow-2xl hover:scale-110 transition-all duration-300 flex items-center gap-2 group border-4 border-white/20">
         <i class="fab fa-whatsapp text-3xl"></i>
         <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 ease-in-out whitespace-nowrap font-bold text-sm">¡Hablemos!</span>
@@ -804,7 +822,7 @@
 
     <!-- Scripts -->
     <script>
-        // --- DATA DEL BLOG (Contenido Real Proporcionado) ---
+        // --- DATA DEL BLOG ---
         const articles = [
             {
                 id: 1,
@@ -829,18 +847,6 @@
                     <p class="mb-4">Uno de los avances más significativos de la Ley 21.484 es el reconocimiento del trabajo de cuidados. Históricamente, el progenitor que vivía con los hijos aportaba "tiempo y esfuerzo" que no se traducía en dinero, mientras que el otro solo aportaba una suma líquida.</p>
                     <p class="mb-4">Hoy, el tribunal debe realizar una tasación económica de estas labores. Limpiar, cocinar, llevar a los hijos al colegio y brindar apoyo emocional tiene un valor monetario. Al calcular la pensión, el juez considera que quien ejerce el cuidado ya está realizando un aporte económico tangible, lo que equilibra la balanza financiera entre ambos padres.</p>
 
-                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">Preguntas Frecuentes</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <p class="font-bold text-brand-mocha">¿Existe la "pensión cero" si el padre o madre está cesante?</p>
-                            <p>No. Bajo la normativa actual, no existe la pensión cero. La ley presume que todo alimentante tiene los medios mínimos para aportar. La cesantía no es excusa para el incumplimiento.</p>
-                        </div>
-                        <div>
-                            <p class="font-bold text-brand-mocha">¿Cómo solicitar el reajuste de la pensión de alimentos?</p>
-                            <p>La pensión se reajusta automáticamente de acuerdo a la variación del IMM o del IPC. Si las necesidades del niño han aumentado, se debe solicitar un proceso de mediación previa para modificar el monto.</p>
-                        </div>
-                    </div>
-
                     <div class="bg-brand-base border-l-4 border-brand-mahogany p-4 mt-6">
                         <p class="font-bold text-brand-dark">Conclusión: Hacia una justicia familiar equilibrada</p>
                         <p class="text-sm">Navegar por el sistema legal y emocional del Derecho de Familia requiere un acompañamiento que entienda tanto los números como la psicología detrás de cada conflicto. Asegurar una pensión justa es el primer paso para la estabilidad de tu hogar.</p>
@@ -863,17 +869,6 @@
                         <li><strong>Identificación de detonantes:</strong> Qué situaciones estresan al estudiante.</li>
                         <li><strong>Estrategias de regulación:</strong> Uso de espacios de calma, apoyos visuales o pausas sensoriales.</li>
                         <li><strong>Protocolo de actuación:</strong> Pasos claros que el personal debe seguir durante una crisis, priorizando siempre la dignidad y la integridad física del menor.</li>
-                    </ul>
-
-                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">Prohibición de sanciones por crisis sensoriales</h3>
-                    <p class="mb-4">Es vital que los padres sepan que la Circular 586 prohíbe estrictamente sancionar disciplinariamente conductas que sean consecuencia de la condición de espectro autista. Una desregulación no es un "mal comportamiento" ni una falta a la convivencia escolar; es una manifestación de una barrera del entorno que el colegio debe ayudar a mitigar.</p>
-
-                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">Derechos laborales para padres ante emergencias escolares</h3>
-                    <p class="mb-4">La Ley TEA también modificó el Código del Trabajo. Si tu hijo/a presenta una emergencia relacionada con su condición en el colegio, tienes derecho a:</p>
-                    <ul class="list-disc pl-5 mb-4 space-y-2">
-                        <li>Ausentarte de tu lugar de trabajo para acudir al establecimiento.</li>
-                        <li>Este tiempo se considera como trabajado para todos los efectos legales.</li>
-                        <li>Solo debes dar aviso a tu empleador y, posteriormente, acreditar la situación mediante una constancia del colegio o el diagnóstico médico.</li>
                     </ul>
 
                     <div class="bg-brand-base border-l-4 border-brand-mahogany p-4 mt-6">
@@ -900,17 +895,6 @@
                         <li><strong>Validez Legal:</strong> El Acta de Acuerdo redactada en mediación privada se sube al sistema del Poder Judicial y tiene la misma validez que una sentencia judicial.</li>
                     </ul>
 
-                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">Cobertura local: Mostazal, Rengo, Machalí y Rancagua</h3>
-                    <p class="mb-4">Rosario Garrido ofrece un servicio especializado para las familias de la zona. Conozco la realidad local y las dinámicas de los tribunales de familia de la región, lo que permite redactar acuerdos que sean realistas y ejecutables.</p>
-
-                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">¿Qué temas se pueden resolver?</h3>
-                    <ul class="list-disc pl-5 mb-4 space-y-2">
-                        <li>Pensión de Alimentos (Fijación, aumento o rebaja).</li>
-                        <li>Relación Directa y Regular (Régimen de visitas).</li>
-                        <li>Cuidado Personal (Tuición).</li>
-                        <li>Compensación Económica.</li>
-                    </ul>
-
                     <div class="bg-brand-base border-l-4 border-brand-mahogany p-4 mt-6">
                         <p class="font-bold text-brand-dark">Conclusión: El diálogo es el camino más corto</p>
                         <p class="text-sm">No permitas que el conflicto se estanque en la burocracia. Un acuerdo construido desde la mediación es mucho más sostenible en el tiempo que una imposición del juez.</p>
@@ -934,14 +918,6 @@
                         <li><strong>WISC-V (Escala de Inteligencia de Wechsler):</strong> Es fundamental para comprender el perfil cognitivo del niño, sus fortalezas y sus desafíos de procesamiento, lo cual es vital para las adecuaciones curriculares.</li>
                     </ul>
 
-                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">El Informe: La llave para beneficios estatales y el PIE</h3>
-                    <p class="mb-4">Un informe de calidad bajo estos estándares es la herramienta necesaria para:</p>
-                    <ul class="list-disc pl-5 mb-4 space-y-2">
-                        <li><strong>Ingreso al Programa de Integración Escolar (PIE):</strong> Los colegios requieren evidencia técnica para asignar recursos y especialistas.</li>
-                        <li><strong>Credencial de Discapacidad (COMPIN):</strong> Permite acceder a beneficios arancelarios, apoyos del SENADIS y protección legal ampliada.</li>
-                        <li><strong>Tratamientos específicos:</strong> Las Isapres y Fonasa requieren códigos y diagnósticos precisos para las coberturas de fonoaudiología y terapia ocupacional.</li>
-                    </ul>
-
                     <div class="bg-brand-base border-l-4 border-brand-mahogany p-4 mt-6">
                         <p class="font-bold text-brand-dark">Conclusión: Invertir en certeza es ganar tiempo</p>
                         <p class="text-sm">Un diagnóstico vago solo retrasa la intervención adecuada. Asegurar que tu hijo cuente con evaluaciones de estándar internacional es la mejor inversión para su desarrollo futuro.</p>
@@ -961,15 +937,6 @@
                     <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">¿Por qué los 12 años son el "punto de quiebre"?</h3>
                     <p class="mb-4">A esta edad, el cerebro adolescente atraviesa una reestructuración masiva. Si a esto sumamos el estrés del entorno escolar chileno y las secuelas de la desconexión social post-2020, nos encontramos ante una "tormenta perfecta". Los padres suelen notar que su hijo/a "ya no es el mismo/a", interpretando los cambios solo como "rebeldía", cuando a menudo hay una crisis de salud mental subyacente.</p>
 
-                    <h3 class="text-xl font-bold text-brand-dark mt-6 mb-3 font-serif">Señales de alerta para padres</h3>
-                    <p class="mb-4">Es fundamental estar atentos a los cambios sutiles antes de que se conviertan en crisis profundas:</p>
-                    <ul class="list-disc pl-5 mb-4 space-y-2">
-                        <li><strong>Aislamiento extremo:</strong> Más allá de la necesidad de privacidad, el rechazo total a interactuar con la familia o amigos.</li>
-                        <li><strong>Alteraciones del sueño y apetito:</strong> Dormir demasiado o tener insomnio persistente.</li>
-                        <li><strong>Bajo rendimiento repentino:</strong> La pérdida de interés en los estudios suele ser un síntoma de depresión, no de flojera.</li>
-                        <li><strong>Irritabilidad desproporcionada:</strong> Reacciones de ira que ocultan una profunda tristeza o ansiedad.</li>
-                    </ul>
-
                     <div class="bg-brand-base border-l-4 border-brand-mahogany p-4 mt-6">
                         <p class="font-bold text-brand-dark">Conclusión: No es solo "una etapa"</p>
                         <p class="text-sm">Ignorar el malestar emocional de un preadolescente bajo la premisa de que "ya se le pasará" es un riesgo alto. Validar sus sentimientos y buscar apoyo profesional es un acto de amor y prevención legal.</p>
@@ -983,7 +950,6 @@
             const slider = document.getElementById('blog-slider');
             if (!slider) return;
 
-            // Generar Schema.org para SEO (Ayuda a Google a entender que son artículos)
             const schemaData = {
                 "@context": "https://schema.org",
                 "@type": "Blog",
@@ -1003,7 +969,6 @@
             script.text = JSON.stringify(schemaData);
             document.head.appendChild(script);
 
-            // Renderizar Tarjetas
             slider.innerHTML = articles.map(article => `
                 <div class="min-w-[85vw] md:min-w-[350px] lg:min-w-[400px] snap-center bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group cursor-pointer flex flex-col h-auto" onclick="openArticle(${article.id})">
                     <div class="mb-6">
@@ -1021,10 +986,9 @@
             `).join('');
         }
 
-        // Lógica de Scroll para botones
         function scrollBlog(direction) {
             const slider = document.getElementById('blog-slider');
-            const scrollAmount = 400; // Ancho aproximado de tarjeta + gap
+            const scrollAmount = 400; 
             if (direction === 'left') {
                 slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
             } else {
@@ -1032,13 +996,11 @@
             }
         }
 
-        
         function openArticle(id) {
             const article = articles.find(a => a.id === id);
             if (!article) return;
 
-            // Rellenar contenido del modal (Simulando el contenido completo si no existe en la data de ejemplo)
-            const fullContent = article.content.length > 50 ? article.content : `<p class="mb-4 text-lg text-gray-600">${article.preview}</p><p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p><h3 class="text-xl font-serif font-bold text-brand-dark mb-3">Profundizando en el tema</h3><p class="mb-4">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>`;
+            const fullContent = article.content;
 
             document.getElementById('blog-title').innerText = article.title;
             document.getElementById('blog-date').innerText = article.date;
@@ -1056,19 +1018,15 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Inicializar Blog al cargar
         document.addEventListener('DOMContentLoaded', renderBlog);
 
-
-        // --- MODAL AGENDAMIENTO (Lógica Existente) ---
+        // --- MODAL AGENDAMIENTO ---
         const modal = document.getElementById('bookingModal');
         
         function openModal(type) {
             if (modal) {
                 modal.classList.remove('hidden');
                 document.body.style.overflow = 'hidden';
-            } else {
-                console.error("No se encontró el modal con ID 'bookingModal'");
             }
         }
 
@@ -1096,15 +1054,13 @@
             });
         }
 
-        // Scroll Reveal Animation
+        // Scroll Reveal
         function reveal() {
             var reveals = document.querySelectorAll(".reveal");
-            
             for (var i = 0; i < reveals.length; i++) {
                 var windowHeight = window.innerHeight;
                 var elementTop = reveals[i].getBoundingClientRect().top;
                 var elementVisible = 100;
-                
                 if (elementTop < windowHeight - elementVisible) {
                     reveals[i].classList.add("active");
                 }
@@ -1112,9 +1068,8 @@
         }
 
         window.addEventListener("scroll", reveal);
-        reveal(); // Trigger once on load
+        reveal();
 
-        // Navbar blur effect on scroll
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
             if (window.scrollY > 20) {
