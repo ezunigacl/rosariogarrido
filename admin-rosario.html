@@ -408,20 +408,23 @@
             }, []);
             
             // CRUD Handlers
-            const handleSavePatient = async (e) => {
+const handleSavePatient = (e) => {
                 e.preventDefault();
                 const pData = { ...patientForm, basePrice: Number(patientForm.basePrice), recurrence: Number(patientForm.recurrence) };
                 if (dbInstance) {
                     const appId = 'rosario-prod';
-                    if (editingItem && typeof editingItem.id === 'string') await fb.updateDoc(fb.doc(dbInstance, 'artifacts', appId, 'public', 'data', 'patients', editingItem.id), pData);
-                    else await fb.addDoc(fb.collection(dbInstance, 'artifacts', appId, 'public', 'data', 'patients'), { ...pData, createdAt: new Date().toISOString() });
+                    if (editingItem && typeof editingItem.id === 'string') {
+                        fb.updateDoc(fb.doc(dbInstance, 'artifacts', appId, 'public', 'data', 'patients', editingItem.id), pData);
+                    } else {
+                        fb.addDoc(fb.collection(dbInstance, 'artifacts', appId, 'public', 'data', 'patients'), { ...pData, createdAt: new Date().toISOString() });
+                    }
                 }
                 if (editingItem) setPatients(patients.map(p => p.id === editingItem.id ? { ...p, ...pData } : p));
                 else setPatients([...patients, { id: Date.now(), ...pData }]);
                 closeModal();
             };
 
-            const handleSaveAppt = async (e) => {
+            const handleSaveAppt = (e) => {
                 e.preventDefault();
                 const patient = patients.find(p => p.id == apptForm.patientId);
                 const aData = { ...apptForm, patientName: patient.name, price: Number(apptForm.price), paidAmount: Number(apptForm.paidAmount) };
@@ -440,8 +443,11 @@
                 
                 if (dbInstance) {
                     const appId = 'rosario-prod';
-                    if (editingItem && typeof editingItem.id === 'string') await fb.updateDoc(fb.doc(dbInstance, 'artifacts', appId, 'public', 'data', 'appointments', editingItem.id), aData);
-                    else await fb.addDoc(fb.collection(dbInstance, 'artifacts', appId, 'public', 'data', 'appointments'), { ...aData, createdAt: new Date().toISOString() });
+                    if (editingItem && typeof editingItem.id === 'string') {
+                        fb.updateDoc(fb.doc(dbInstance, 'artifacts', appId, 'public', 'data', 'appointments', editingItem.id), aData);
+                    } else {
+                        fb.addDoc(fb.collection(dbInstance, 'artifacts', appId, 'public', 'data', 'appointments'), { ...aData, createdAt: new Date().toISOString() });
+                    }
                 }
                 
                 if (editingItem) setAppointments(appointments.map(a => a.id === editingItem.id ? { ...a, ...aData } : a));
