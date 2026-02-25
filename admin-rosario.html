@@ -145,6 +145,13 @@
             return dateStr.split('-').reverse().join('/');
         };
 
+        const getStatus = (price, paid) => {
+            if (price === 0) return { label: 'Usado/Gratis', color: 'bg-gray-100 text-gray-600' };
+            if (paid >= price) return { label: 'Pagado', color: 'bg-green-100 text-green-700' };
+            if (paid > 0) return { label: 'Abonado', color: 'bg-yellow-100 text-yellow-700' };
+            return { label: 'Pendiente', color: 'bg-red-100 text-red-700' };
+        };
+
         // --- INTELIGENCIA COMERCIAL Y PROYECCIÓN ---
         const getCommercialAction = (patient, appointments) => {
             const pAppts = appointments.filter(a => a.patientId === patient.id);
@@ -367,29 +374,47 @@
                 { label: "Uso de Pack (Sesión)", price: 0, isPackUsage: true },
             ];
 
-            // FIREBASE LISTENER
+            // FIREBASE LISTENER (CORREGIDO)
             useEffect(() => {
-                if (fb.firebaseConfig && fb.firebaseConfig.apiKey) {
-                    try {
-                        const app = fb.initializeApp(fb.firebaseConfig);
-                        const auth = fb.getAuth(app);
-                        const db = fb.getFirestore(app);
-                        setDbInstance(db);
-                        fb.signInAnonymously(auth);
-                        
-                        const appId = 'rosario-prod'; 
-                        fb.onSnapshot(fb.query(fb.collection(db, 'artifacts', appId, 'public', 'data', 'patients'), fb.orderBy('name')), 
-                            (s) => { if (!s.empty) setPatients(s.docs.map(d => ({ id: d.id, ...d.data() }))); }
-                        );
-                        fb.onSnapshot(fb.query(fb.collection(db, 'artifacts', appId, 'public', 'data', 'appointments'), fb.orderBy('date', 'desc')), 
-                            (s) => { if (!s.empty) setAppointments(s.docs.map(d => ({ id: d.id, ...d.data() }))); }
-                        );
-                    } catch(e) { console.log("Modo Demo", e); }
-                }
+                const initFirebase = async () => {
+                    if (fb.firebaseConfig && fb.firebaseConfig.apiKey) {
+                        try {
+                            const app = fb.initializeApp(fb.firebaseConfig);
+                            const auth = fb.getAuth(app);
+                            const db = fb.getFirestore(app);
+                            setDbInstance(db);
+                            
+                            // MODIFICACIÓN: Envolvemos la Promesa de signInAnonymously para capturar errores de Auth
+                            try {
+                                await fb.signInAnonymously(auth);
+                            } catch (authError) {
+                                console.warn("Firebase Auth falló, la app continuará en Modo Demo (Local).", authError.message);
+                                // Salimos de la función aquí para no intentar llamar onSnapshot sin autenticación válida
+                                return; 
+                            }
+                            
+                            const appId = 'rosario-prod'; 
+                            
+                            // Añadidos los callbacks de error al onSnapshot para mayor robustez
+                            fb.onSnapshot(fb.query(fb.collection(db, 'artifacts', appId, 'public', 'data', 'patients'), fb.orderBy('name')), 
+                                (s) => { if (!s.empty) setPatients(s.docs.map(d => ({ id: d.id, ...d.data() }))); },
+                                (err) => console.error("Firebase read error (patients):", err)
+                            );
+                            
+                            fb.onSnapshot(fb.query(fb.collection(db, 'artifacts', appId, 'public', 'data', 'appointments'), fb.orderBy('date', 'desc')), 
+                                (s) => { if (!s.empty) setAppointments(s.docs.map(d => ({ id: d.id, ...d.data() }))); },
+                                (err) => console.error("Firebase read error (appointments):", err)
+                            );
+
+                        } catch(e) { 
+                            console.warn("Modo Demo Activo (Fallo de inicialización Firebase):", e.message); 
+                        }
+                    }
+                };
+
+                initFirebase();
             }, []);
-
-            const projections = useMemo(() => calculateMonthlyProjections(patients, appointments), [patients, appointments]);
-
+            
             // CRUD Handlers
             const handleSavePatient = async (e) => {
                 e.preventDefault();
