@@ -374,45 +374,37 @@
                 { label: "Uso de Pack (Sesión)", price: 0, isPackUsage: true },
             ];
 
-            // FIREBASE LISTENER (CORREGIDO)
+// FIREBASE LISTENER (CORREGIDO SIN ASYNC/AWAIT PARA EVITAR ERROR DE BABEL)
             useEffect(() => {
-                const initFirebase = async () => {
-                    if (fb.firebaseConfig && fb.firebaseConfig.apiKey) {
-                        try {
-                            const app = fb.initializeApp(fb.firebaseConfig);
-                            const auth = fb.getAuth(app);
-                            const db = fb.getFirestore(app);
-                            setDbInstance(db);
-                            
-                            // MODIFICACIÓN: Envolvemos la Promesa de signInAnonymously para capturar errores de Auth
-                            try {
-                                await fb.signInAnonymously(auth);
-                            } catch (authError) {
-                                console.warn("Firebase Auth falló, la app continuará en Modo Demo (Local).", authError.message);
-                                // Salimos de la función aquí para no intentar llamar onSnapshot sin autenticación válida
-                                return; 
-                            }
-                            
+                if (fb.firebaseConfig && fb.firebaseConfig.apiKey) {
+                    try {
+                        const app = fb.initializeApp(fb.firebaseConfig);
+                        const auth = fb.getAuth(app);
+                        const db = fb.getFirestore(app);
+                        setDbInstance(db);
+                        
+                        // Usamos .then() y .catch() para que Babel Standalone no rompa la página
+                        fb.signInAnonymously(auth).then(() => {
                             const appId = 'rosario-prod'; 
                             
-                            // Añadidos los callbacks de error al onSnapshot para mayor robustez
                             fb.onSnapshot(fb.query(fb.collection(db, 'artifacts', appId, 'public', 'data', 'patients'), fb.orderBy('name')), 
                                 (s) => { if (!s.empty) setPatients(s.docs.map(d => ({ id: d.id, ...d.data() }))); },
-                                (err) => console.error("Firebase read error (patients):", err)
+                                (err) => console.error("Error lectura pacientes:", err)
                             );
                             
                             fb.onSnapshot(fb.query(fb.collection(db, 'artifacts', appId, 'public', 'data', 'appointments'), fb.orderBy('date', 'desc')), 
                                 (s) => { if (!s.empty) setAppointments(s.docs.map(d => ({ id: d.id, ...d.data() }))); },
-                                (err) => console.error("Firebase read error (appointments):", err)
+                                (err) => console.error("Error lectura citas:", err)
                             );
+                        }).catch((authError) => {
+                            // Aquí se captura de forma segura el error auth/configuration-not-found
+                            console.warn("Firebase Auth falló, modo Local Activado.", authError.message);
+                        });
 
-                        } catch(e) { 
-                            console.warn("Modo Demo Activo (Fallo de inicialización Firebase):", e.message); 
-                        }
+                    } catch(e) { 
+                        console.warn("Fallo general de Firebase:", e.message); 
                     }
-                };
-
-                initFirebase();
+                }
             }, []);
             
             // CRUD Handlers
