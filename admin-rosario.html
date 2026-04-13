@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Panel | Rosario Garrido</title>
+    
+    <!-- Cargar Estilos (Tailwind) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Cargar Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Cargar React y ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Cargar Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Configuración Visual Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            base: '#FAF9F6', 
+                            mocha: '#A47864', 
+                            lavender: '#A78BFA', 
+                            mahogany: '#7A2E2A', 
+                            dark: '#1A1918'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Manrope', 'sans-serif'],
+                        serif: ['Instrument Serif', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #FAF9F6; color: #1A1918; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-scale-in { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FAF9F6; }
+        ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- LÓGICA DE FIREBASE (MÓDULO) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Credenciales actualizadas del usuario
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdT9tfSD_qWVBo06w0m_Cs_QG9y_ffzRg",
+            authDomain: "admin-rosario.firebaseapp.com",
+            projectId: "admin-rosario",
+            storageBucket: "admin-rosario.firebasestorage.app",
+            messagingSenderId: "1047614385294",
+            appId: "1:1047614385294:web:d29b30edce59704aeeeddf",
+            measurementId: "G-4S0L53DC3J"
+        };
+
+        window.firebaseLib = {
+            initializeApp, getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, getAuth, signInAnonymously, onAuthStateChanged, firebaseConfig
+        };
+    </script>
+
+    <!-- LÓGICA DE LA APP (REACT) -->
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // --- DEFINICIÓN DE ICONOS (SVG Nativo) ---
+        const IconBase = ({ children, size = 24, className = "", color = "currentColor", ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>{children}</svg>
+        );
+
+        const Icons = {
+            LayoutDashboard: (p) => <IconBase {...p}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></IconBase>,
+            Users: (p) => <IconBase {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconBase>,
+            Calendar: (p) => <IconBase {...p}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></IconBase>,
+            DollarSign: (p) => <IconBase {...p}><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></IconBase>,
+            Plus: (p) => <IconBase {...p}><path d="M5 12h14"/><path d="M12 5v14"/></IconBase>,
+            CheckCircle: (p) => <IconBase {...p}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></IconBase>,
+            Clock: (p) => <IconBase {...p}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></IconBase>,
+            Trash2: (p) => <IconBase {...p}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></IconBase>,
+            UserPlus: (p) => <IconBase {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></IconBase>,
+            CreditCard: (p) => <IconBase {...p}><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></IconBase>,
+            AlertCircle: (p) => <IconBase {...p}><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></IconBase>,
+            TrendingUp: (p) => <IconBase {...p}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></IconBase>,
+            CalendarDays: (p) => <IconBase {...p}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></IconBase>,
+            Edit2: (p) => <IconBase {...p}><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></IconBase>,
+            X: (p) => <IconBase {...p}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></IconBase>,
+            AlertTriangle: (p) => <IconBase {...p}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></IconBase>,
+            Mail: (p) => <IconBase {...p}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></IconBase>,
+            Phone: (p) => <IconBase {...p}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></IconBase>,
+            Target: (p) => <IconBase {...p}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></IconBase>,
+            BarChart: (p) => <IconBase {...p}><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></IconBase>,
+            Eye: (p) => <IconBase {...p}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></IconBase>
+        };
+
+        const { Users, Calendar, DollarSign, Plus, CheckCircle, Clock, Trash2, LayoutDashboard, UserPlus, CreditCard, AlertCircle, TrendingUp, CalendarDays, Edit2, X, AlertTriangle, Mail, Phone, Target, BarChart, Eye } = Icons;
+
+        // --- DATOS INICIALES (MOCK DATA) ---
+        const REAL_PATIENTS = [
+            { id: 1, name: "Josefa Valdes Perez", rut: "20163600-0", phone: "+56950150527", email: "josefa.3valdes@gmail.com", gender: "F", system: "Particular", type: "pack", packCredits: 1, recurrence: 15, basePrice: 43333 }, 
+            { id: 2, name: "Violeta Paz Contreras", rut: "23663247-4", phone: "+56991256305", email: "rodrigocsalvo@gmail.com", gender: "F", system: "Particular", type: "pack", packCredits: 1, recurrence: 15, basePrice: 43333 }, 
+            { id: 3, name: "Martina Contreras Bravo", rut: "23417622-6", phone: "+56997852625", email: "Cabo.200@gmail.com", gender: "F", system: "Particular", type: "pack", packCredits: 2, recurrence: 15, basePrice: 43333 }, 
+            { id: 4, name: "Agustín Garces Abusleme", rut: "23271653-3", phone: "+56995392821", email: "pilu.abusleme@gmail.com", gender: "M", system: "Particular", type: "normal", basePrice: 50000, recurrence: 15 },
+            { id: 5, name: "Jacqueline Valenzuela", rut: "15973835-3", phone: "+56951447698", email: "jacqueline.evb85@gmail.com", gender: "F", system: "Particular", type: "normal", basePrice: 28000, recurrence: 15 },
+            { id: 6, name: "Isidora Dinamarca", rut: "22404167-5", phone: "+56947132504", email: "dinamarcaisidora24@gmail.com", gender: "F", system: "Particular", type: "normal", basePrice: 28000, recurrence: 15 },
+            { id: 7, name: "Camila Lorenzini", rut: "Sin Registro", phone: "+56977465952", email: "cflorenzini1@gmail.com", gender: "F", system: "Particular", type: "normal", basePrice: 35000, recurrence: 7 }
+        ];
+
+        const INITIAL_APPOINTMENTS = [
+            { id: 101, patientId: 1, patientName: "Josefa Valdes Perez", type: "Pack Lanzamiento", price: 130000, paidAmount: 130000, date: "2026-02-10" },
+            { id: 102, patientId: 2, patientName: "Violeta Paz Contreras", type: "Pack Lanzamiento", price: 130000, paidAmount: 130000, date: "2026-02-10" },
+            { id: 103, patientId: 3, patientName: "Martina Contreras Bravo", type: "Pack Lanzamiento", price: 130000, paidAmount: 130000, date: "2026-02-10" },
+            { id: 201, patientId: 1, patientName: "Josefa Valdes Perez", type: "Uso de Pack (Sesión)", price: 0, paidAmount: 0, date: "2026-03-01" },
+            { id: 202, patientId: 2, patientName: "Violeta Paz Contreras", type: "Uso de Pack (Sesión)", price: 0, paidAmount: 0, date: "2026-03-01" },
+            { id: 203, patientId: 3, patientName: "Martina Contreras Bravo", type: "Uso de Pack (Sesión)", price: 0, paidAmount: 0, date: "2026-03-01" },
+            { id: 204, patientId: 4, patientName: "Agustín Garces Abusleme", type: "Online (Nuevo)", price: 50000, paidAmount: 50000, date: "2026-02-18" },
+            { id: 205, patientId: 5, patientName: "Jacqueline Valenzuela", type: "Online (Diferencial)", price: 28000, paidAmount: 28000, date: "2026-02-15" },
+            { id: 206, patientId: 6, patientName: "Isidora Dinamarca", type: "Online (Diferencial)", price: 28000, paidAmount: 28000, date: "2026-02-15" },
+            { id: 208, patientId: 7, patientName: "Camila Lorenzini", type: "Online (Diferencial)", price: 35000, paidAmount: 35000, date: "2026-02-07" },
+            { id: 207, patientId: 7, patientName: "Camila Lorenzini", type: "Online (Diferencial)", price: 35000, paidAmount: 35000, date: "2026-02-14" },
+        ];
+
+        // --- UTILIDADES PROTEGIDAS ---
+        const formatCurrency = (amount) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(Math.round(amount || 0));
+        
+        const addDays = (dateStr, days) => {
+            if (!dateStr) return '';
+            const d = new Date(String(dateStr) + "T12:00:00"); 
+            if(isNaN(d.getTime())) return ''; 
+            d.setDate(d.getDate() + days);
+            return d.toISOString().split('T')[0];
+        };
+
+        const formatDate = (dateStr) => {
+            if (!dateStr) return '';
+            return String(dateStr).split('-').reverse().join('/');
+        };
+
+        const getStatus = (price, paid) => {
+            const safePrice = Number(price) || 0;
+            const safePaid = Number(paid) || 0;
+            if (safePrice === 0) return { label: 'Usado/Gratis', color: 'bg-gray-100 text-gray-600' };
+            if (safePaid >= safePrice) return { label: 'Pagado', color: 'bg-green-100 text-green-700' };
+            if (safePaid > 0) return { label: 'Abonado', color: 'bg-yellow-100 text-yellow-700' };
+            return { label: 'Pendiente', color: 'bg-red-100 text-red-700' };
+        };
+
+        // --- INTELIGENCIA COMERCIAL Y PROYECCIÓN ---
+        const getCommercialAction = (patient, appointments) => {
+            const pAppts = appointments.filter(a => a.patientId === patient.id);
+            const sortedAppts = [...pAppts].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+            const lastAppt = sortedAppts[0];
+            const todayStr = new Date().toISOString().split('T')[0];
+            const recDays = patient.recurrence || 15;
+
+            // 1. Cobros Pendientes
+            const futureUnpaid = pAppts.find(a => (a.price || 0) > (a.paidAmount || 0) && (a.price || 0) > 0);
+            if (futureUnpaid) {
+                return { action: "Cobrar saldo pendiente", amount: futureUnpaid.price - futureUnpaid.paidAmount, color: "text-orange-500", bg: "bg-orange-50", icon: DollarSign };
+            }
+
+            // 2. Gestión de Packs (Renovación)
+            if (patient.type === 'pack' || patient.packCredits > 0) {
+                const credits = patient.packCredits || 0;
+                if (credits === 0) {
+                    return { action: "Pack Agotado. Vender Renovación", amount: 130000, color: "text-red-500", bg: "bg-red-50", icon: AlertCircle };
+                } 
+                if (credits === 1) {
+                    const targetDate = addDays(lastAppt?.date || todayStr, recDays);
+                    return { action: `Renovación sugerida: ${formatDate(targetDate)}`, amount: 130000, color: "text-[#A47864]", bg: "bg-[#A47864]/10", icon: TrendingUp };
+                }
+                return { action: `Pack vigente (${credits} sesiones rest.)`, amount: 0, color: "text-green-600", bg: "bg-green-50", icon: CheckCircle };
+            } 
+            else {
+                if (!lastAppt || !lastAppt.date || lastAppt.date < todayStr) {
+                    return { action: `Seguimiento / Agendar cita`, amount: patient.basePrice || 0, color: "text-[#A78BFA]", bg: "bg-[#A78BFA]/10", icon: CalendarDays };
+                } else {
+                    const nextDate = addDays(lastAppt.date, recDays);
+                    return { action: `Agendado. Próx sugerida: ${formatDate(nextDate)}`, amount: patient.basePrice || 0, color: "text-green-600", bg: "bg-green-50", icon: CheckCircle };
+                }
+            }
+        };
+
+        const calculateMonthlyProjections = (patients, appointments) => {
+            const today = new Date();
+            const months = [];
+            
+            for(let i=0; i<3; i++) {
+                const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+                const monthName = d.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+                months.push({
+                    key: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}`,
+                    label: monthName.charAt(0).toUpperCase() + monthName.slice(1),
+                    cobrado: 0,
+                    pendiente: 0,
+                    proyectado: 0,
+                    details: []
+                });
+            }
+
+            appointments.forEach(a => {
+                if(!a.date) return;
+                const year = String(a.date).split('-')[0];
+                const month = String(a.date).split('-')[1];
+                const key = `${year}-${month}`;
+                const m = months.find(x => x.key === key);
+                
+                if (m) {
+                    const price = a.price || 0;
+                    const paid = a.paidAmount || 0;
+                    m.cobrado += paid;
+                    const deuda = Math.max(0, price - paid);
+                    m.pendiente += deuda;
+                    
+                    if (deuda > 0) {
+                        m.details.push({
+                            id: a.id,
+                            patientName: a.patientName || 'Desconocido',
+                            date: a.date,
+                            amount: deuda,
+                            isSimulated: false,
+                            realAppt: a
+                        });
+                    }
+                }
+            });
+
+            patients.forEach(p => {
+                const pAppts = appointments.filter(a => a.patientId === p.id).sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
+                let currDateStr = pAppts.length > 0 && pAppts[0].date ? pAppts[0].date : today.toISOString().split('T')[0];
+                let currDate = new Date(currDateStr + "T12:00:00");
+                
+                let credits = p.packCredits || 0;
+                const recDays = p.recurrence || 15;
+
+                const maxDate = new Date();
+                maxDate.setDate(maxDate.getDate() + 90); 
+
+                let safety = 0;
+                while (currDate < maxDate && safety < 15 && recDays > 0) {
+                    currDate.setDate(currDate.getDate() + recDays);
+                    
+                    const key = `${currDate.getFullYear()}-${String(currDate.getMonth()+1).padStart(2, '0')}`;
+                    const m = months.find(x => x.key === key);
+                    
+                    if (m && currDate >= new Date(new Date().setHours(0,0,0,0))) {
+                        let simAmount = 0;
+                        let simType = '';
+
+                        if (p.type === 'pack') {
+                            credits -= 1;
+                            if (credits <= 0) {
+                                simAmount = 130000;
+                                simType = 'Renovación de Pack';
+                                credits = 3;
+                            }
+                        } else {
+                            simAmount = (p.basePrice || 0);
+                            simType = 'Sesión Normal Sugerida';
+                        }
+
+                        if (simAmount > 0) {
+                            m.proyectado += simAmount;
+                            m.details.push({
+                                id: `sim-${p.id}-${currDate.getTime()}`,
+                                patientName: p.name || 'Desconocido',
+                                date: currDate.toISOString().split('T')[0],
+                                amount: simAmount,
+                                isSimulated: true,
+                                actionType: simType,
+                                patientObj: p
+                            });
+                        }
+                    }
+                    safety++;
+                }
+            });
+            return months;
+        };
+
+        const ProjCard = ({ monthData, onOpenDetails, colorClass }) => {
+            const totalFaltaCobrar = monthData.pendiente + monthData.proyectado;
+            const totalBruto = monthData.cobrado + totalFaltaCobrar;
+            const retencionSII = totalBruto * 0.1525; // 15.25%
+            const liquido = totalBruto - retencionSII;
+
+            return (
+                <div className={`backdrop-blur-md border border-white/50 rounded-[2rem] p-6 shadow-xl ${colorClass} text-white transition-transform hover:-translate-y-1`}>
+                    <div className="flex justify-between items-center mb-4 border-b border-white/20 pb-3">
+                        <p className="text-white/90 text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+                            <Calendar size={16}/> {monthData.label}
+                        </p>
+                    </div>
+                    
+                    <div 
+                        className="mb-5 cursor-pointer group hover:bg-white/10 p-2 -mx-2 rounded-xl transition-colors"
+                        onClick={() => onOpenDetails(monthData)}
+                        title="Haz clic para ver el detalle"
+                    >
+                        <span className="text-xs text-white/80 block mb-1 group-hover:text-white flex items-center gap-1">
+                            Pendiente por Cobrar <Eye size={12} className="opacity-70 group-hover:opacity-100"/>
+                        </span>
+                        <h3 className="text-4xl font-serif text-white drop-shadow-sm group-hover:scale-105 transition-transform origin-left">{formatCurrency(totalFaltaCobrar)}</h3>
+                    </div>
+                    
+                    <div className="space-y-3 bg-black/20 rounded-2xl p-4 text-xs">
+                        <div className="flex justify-between items-center pb-2 border-b border-white/10">
+                            <span className="text-white/70 font-medium">Acumulado (Ya en caja)</span>
+                            <span className="font-bold text-green-300 text-sm">{formatCurrency(monthData.cobrado)}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-white/70">Total Bruto Mes</span>
+                            <span className="font-bold text-white/90">{formatCurrency(totalBruto)}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-white/70">Líquido (Menos 15.25% SII)</span>
+                            <span className="font-bold text-white">{formatCurrency(liquido)}</span>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- APP PRINCIPAL ---
+        function App() {
+            const [view, setView] = useState('dashboard');
+            const [patients, setPatients] = useState(REAL_PATIENTS);
+            const [appointments, setAppointments] = useState(INITIAL_APPOINTMENTS);
+            
+            const [isModalOpen, setIsModalOpen] = useState(false);
+            const [modalType, setModalType] = useState('');
+            const [editingItem, setEditingItem] = useState(null);
+            
+            const [detailsModalData, setDetailsModalData] = useState(null);
+
+            const [patientForm, setPatientForm] = useState({ name: '', rut: '', phone: '', email: '', gender: 'F', system: 'Particular', type: 'normal', basePrice: 50000, recurrence: 15, packCredits: 0 });
+            const [apptForm, setApptForm] = useState({ patientId: '', type: 'Online (Nuevo)', date: '', price: 50000, paidAmount: 0 });
+
+            const fb = window.firebaseLib || {};
+            const [dbInstance, setDbInstance] = useState(null);
+
+            const SERVICE_TYPES = [
+                { label: "Online (Nuevo)", price: 50000 },
+                { label: "Presencial Santiago", price: 50000 },
+                { label: "Presencial Mostazal", price: 35000 },
+                { label: "Online (Diferencial 35k)", price: 35000 },
+                { label: "Online (Diferencial 28k)", price: 28000 },
+                { label: "Pack Lanzamiento (Compra)", price: 130000, isPackSale: true },
+                { label: "Uso de Pack (Sesión)", price: 0, isPackUsage: true },
+            ];
+
+            // FIREBASE LISTENER SEGURO (SIN ASYNC PARA BABEL)
+            useEffect(() => {
+                if (fb.firebaseConfig && fb.firebaseConfig.apiKey) {
+                    try {
+                        const app = fb.initializeApp(fb.firebaseConfig);
+                        const auth = fb.getAuth(app);
+                        const db = fb.getFirestore(app);
+                        setDbInstance(db);
+                        
+                        fb.signInAnonymously(auth).then(() => {
+                            const appId = 'rosario-prod'; 
+                            
+                            fb.onSnapshot(fb.query(fb.collection(db, 'artifacts', appId, 'public', 'data', 'patients'), fb.orderBy('name')), 
+                                (s) => { if (!s.empty) setPatients(s.docs.map(d => ({ id: d.id, ...d.data() }))); },
+                                (err) => console.error("Error lectura pacientes:", err)
+                            );
+                            
+                            fb.onSnapshot(fb.query(fb.collection(db, 'artifacts', appId, 'public', 'data', 'appointments'), fb.orderBy('date', 'desc')), 
+                                (s) => { if (!s.empty) setAppointments(s.docs.map(d => ({ id: d.id, ...d.data() }))); },
+                                (err) => console.error("Error lectura citas:", err)
+                            );
+                        }).catch((authError) => {
+                            console.warn("Firebase Auth falló, modo Local Activado.", authError.message);
+                        });
+
+                    } catch(e) { 
+                        console.warn("Fallo general de Firebase:", e.message); 
+                    }
+                }
+            }, []);
+
+            // PROYECCIONES DECLARADAS CORRECTAMENTE
+            const projections = useMemo(() => calculateMonthlyProjections(patients, appointments), [patients, appointments]);
+            
+            // CRUD Handlers (Sin async/await para Babel Standalone)
+            const handleSavePatient = (e) => {
+                e.preventDefault();
+                const pData = { ...patientForm, basePrice: Number(patientForm.basePrice), recurrence: Number(patientForm.recurrence) };
+                if (dbInstance) {
+                    const appId = 'rosario-prod';
+                    if (editingItem && typeof editingItem.id === 'string') {
+                        fb.updateDoc(fb.doc(dbInstance, 'artifacts', appId, 'public', 'data', 'patients', editingItem.id), pData);
+                    } else {
+                        fb.addDoc(fb.collection(dbInstance, 'artifacts', appId, 'public', 'data', 'patients'), { ...pData, createdAt: new Date().toISOString() });
+                    }
+                }
+                if (editingItem) setPatients(patients.map(p => p.id === editingItem.id ? { ...p, ...pData } : p));
+                else setPatients([...patients, { id: Date.now(), ...pData }]);
+                closeModal();
+            };
+
+            const handleSaveAppt = (e) => {
+                e.preventDefault();
+                const patient = patients.find(p => String(p.id) === String(apptForm.patientId));
+                const aData = { ...apptForm, patientName: patient ? patient.name : 'Desconocido', price: Number(apptForm.price), paidAmount: Number(apptForm.paidAmount) };
+                const service = SERVICE_TYPES.find(s => s.label === apptForm.type);
+                
+                if (!editingItem && service && patient) {
+                     if (service.isPackSale) {
+                         const updatedCredits = (patient.packCredits || 0) + 3;
+                         setPatients(prev => prev.map(p => p.id === patient.id ? {...p, packCredits: updatedCredits, type: 'pack'} : p));
+                     }
+                     if (service.isPackUsage) {
+                         const updatedCredits = Math.max(0, (patient.packCredits || 0) - 1);
+                         setPatients(prev => prev.map(p => p.id === patient.id ? {...p, packCredits: updatedCredits} : p));
+                     }
+                }
+                
+                if (dbInstance) {
+                    const appId = 'rosario-prod';
+                    if (editingItem && typeof editingItem.id === 'string') {
+                        fb.updateDoc(fb.doc(dbInstance, 'artifacts', appId, 'public', 'data', 'appointments', editingItem.id), aData);
+                    } else {
+                        fb.addDoc(fb.collection(dbInstance, 'artifacts', appId, 'public', 'data', 'appointments'), { ...aData, createdAt: new Date().toISOString() });
+                    }
+                }
+                
+                if (editingItem) setAppointments(appointments.map(a => a.id === editingItem.id ? { ...a, ...aData } : a));
+                else setAppointments([...appointments, { id: Date.now(), ...aData }]);
+                closeModal();
+            };
+
+            const handleDelete = (id, type) => {
+                if(!confirm("¿Eliminar registro?")) return;
+                
+                if (dbInstance && typeof id === 'string') {
+                    const appId = 'rosario-prod';
+                    const collectionName = type === 'appt' ? 'appointments' : 'patients';
+                    try { fb.deleteDoc(fb.doc(dbInstance, 'artifacts', appId, 'public', 'data', collectionName, id)); } catch(e){}
+                }
+
+                if(type === 'appt') setAppointments(prev => prev.filter(a => a.id !== id));
+                if(type === 'patient') setPatients(prev => prev.filter(p => p.id !== id));
+            };
+
+            const closeModal = () => { setIsModalOpen(false); setEditingItem(null); };
+
+            const handleManageDetailItem = (item) => {
+                setDetailsModalData(null); 
+                if (item.isSimulated) {
+                    setEditingItem(null);
+                    setApptForm({
+                        patientId: item.patientObj.id,
+                        type: item.actionType === 'Renovación de Pack' ? 'Pack Lanzamiento (Compra)' : 'Online (Nuevo)',
+                        date: item.date,
+                        price: item.amount,
+                        paidAmount: 0 
+                    });
+                } else {
+                    setEditingItem(item.realAppt);
+                    setApptForm({
+                        ...item.realAppt,
+                        paidAmount: item.realAppt.price 
+                    });
+                }
+                setModalType('appointment');
+                setIsModalOpen(true);
+            };
+
+            const renderModal = () => {
+                if (!isModalOpen) return null;
+                return (
+                    <div className="fixed inset-0 bg-[#1A1918]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 z-50">
+                        <div className="bg-white rounded-3xl p-8 w-full max-w-lg shadow-2xl relative animate-scale-in border border-white/50 max-h-[90vh] overflow-y-auto">
+                            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-400 hover:text-[#1A1918]"><X size={24}/></button>
+                            
+                            {modalType === 'patient' ? (
+                                <form onSubmit={handleSavePatient} className="space-y-4">
+                                    <h3 className="font-serif text-2xl mb-4 text-[#1A1918]">{editingItem ? 'Editar Paciente' : 'Nuevo Paciente'}</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="md:col-span-2"><label className="block text-xs font-bold uppercase text-gray-400 mb-1">Nombre Completo</label><input required type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none focus:ring-2 focus:ring-[#A47864]" value={patientForm.name} onChange={e => setPatientForm({...patientForm, name: e.target.value})} /></div>
+                                        <div><label className="block text-xs font-bold uppercase text-gray-400 mb-1">Correo Electrónico</label><input type="email" className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none" value={patientForm.email} onChange={e => setPatientForm({...patientForm, email: e.target.value})} /></div>
+                                        <div><label className="block text-xs font-bold uppercase text-gray-400 mb-1">Teléfono</label><input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none" value={patientForm.phone} onChange={e => setPatientForm({...patientForm, phone: e.target.value})} /></div>
+                                        
+                                        <div>
+                                            <label className="block text-xs font-bold uppercase text-[#A47864] mb-1">Tipo de Servicio</label>
+                                            <select className="w-full bg-white border border-[#A47864] rounded-xl p-3 outline-none" value={patientForm.type} onChange={e => setPatientForm({...patientForm, type: e.target.value})}>
+                                                <option value="normal">Por Sesión</option>
+                                                <option value="pack">Paciente Pack</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold uppercase text-[#A47864] mb-1">Periodicidad</label>
+                                            <select className="w-full bg-white border border-[#A47864] rounded-xl p-3 outline-none" value={patientForm.recurrence} onChange={e => setPatientForm({...patientForm, recurrence: e.target.value})}>
+                                                <option value="15">Quincenal</option>
+                                                <option value="7">Semanal</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Precio Fijo ($)</label>
+                                            <input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none" value={patientForm.basePrice} onChange={e => setPatientForm({...patientForm, basePrice: e.target.value})} />
+                                        </div>
+                                        {patientForm.type === 'pack' && (
+                                            <div><label className="block text-xs font-bold uppercase text-gray-400 mb-1">Créditos Restantes</label><input type="number" className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none" value={patientForm.packCredits} onChange={e => setPatientForm({...patientForm, packCredits: parseInt(e.target.value)})} /></div>
+                                        )}
+                                    </div>
+                                    <button type="submit" className="w-full bg-[#1A1918] text-white py-3 rounded-xl font-bold hover:bg-[#A47864] transition-all mt-4">{editingItem ? 'Actualizar Paciente' : 'Guardar Paciente'}</button>
+                                </form>
+                            ) : (
+                                <form onSubmit={handleSaveAppt} className="space-y-4">
+                                    <h3 className="font-serif text-2xl mb-4 text-[#1A1918]">{editingItem ? 'Editar Cita' : 'Agendar / Cobrar'}</h3>
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Paciente</label>
+                                        <select required disabled={!!editingItem} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none disabled:bg-gray-100" value={apptForm.patientId} onChange={e => {
+                                            const pid = e.target.value;
+                                            const p = patients.find(x => String(x.id) === String(pid));
+                                            let sugerido = 'Online (Nuevo)';
+                                            if(p && p.type === 'pack') sugerido = 'Uso de Pack (Sesión)';
+                                            if(p && p.basePrice === 35000) sugerido = 'Online (Diferencial 35k)';
+                                            if(p && p.basePrice === 28000) sugerido = 'Online (Diferencial 28k)';
+                                            
+                                            setApptForm({...apptForm, patientId: pid, type: sugerido, price: p ? (p.type === 'pack' ? 0 : p.basePrice) : 50000});
+                                        }}>
+                                            <option value="">Seleccionar paciente...</option>
+                                            {patients.map(p => <option key={p.id} value={p.id}>{p.name || 'Desconocido'} {(p.packCredits || 0) > 0 ? `(${p.packCredits} cred.)` : ''}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Tipo de Servicio</label>
+                                        <select className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none" value={apptForm.type} onChange={(e) => {
+                                            const sel = SERVICE_TYPES.find(s => s.label === e.target.value);
+                                            setApptForm(prev => ({ ...prev, type: sel?.label || e.target.value, price: sel?.price || 0, paidAmount: !editingItem ? 0 : prev.paidAmount }));
+                                        }}>
+                                            {SERVICE_TYPES.map(s => <option key={s.label} value={s.label}>{s.label}</option>)}
+                                        </select>
+                                    </div>
+                                    
+                                    {!(apptForm.type || '').includes('Uso de Pack') && (
+                                        <div className="grid grid-cols-2 gap-4 mt-2">
+                                            <div>
+                                                <label className="block text-xs font-bold uppercase text-[#A47864] mb-1">A Cobrar ($)</label>
+                                                <input type="number" className="w-full bg-white border border-[#A47864] rounded-xl p-3 outline-none" value={apptForm.price} onChange={e => setApptForm({...apptForm, price: parseInt(e.target.value) || 0})} />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold uppercase text-[#A47864] mb-1">Monto Pagado Hoy</label>
+                                                <input type="number" className="w-full bg-white border border-[#A47864] rounded-xl p-3 outline-none" value={apptForm.paidAmount} onChange={e => setApptForm({...apptForm, paidAmount: parseInt(e.target.value) || 0})} />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase text-gray-400 mb-1 mt-2">Fecha de Atención</label>
+                                        <input required type="date" className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 outline-none" value={apptForm.date} onChange={e => setApptForm({...apptForm, date: e.target.value})} />
+                                    </div>
+                                    <button type="submit" className="w-full bg-[#7A2E2A] text-white py-3 rounded-xl font-bold hover:bg-opacity-90 transition-all mt-4">{editingItem ? 'Actualizar Cita / Registrar Pago' : 'Confirmar Cita'}</button>
+                                </form>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderDetailsModal = () => {
+                if (!detailsModalData) return null;
+                const sortedDetails = [...detailsModalData.details].sort((a,b) => new Date(a.date || 0) - new Date(b.date || 0));
+                
+                return (
+                    <div className="fixed inset-0 bg-[#1A1918]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div className="bg-white rounded-[2rem] p-8 w-full max-w-2xl shadow-2xl relative animate-scale-in border border-white/50 max-h-[90vh] flex flex-col">
+                            <button onClick={() => setDetailsModalData(null)} className="absolute top-4 right-4 text-gray-400 hover:text-[#1A1918] bg-gray-100 p-2 rounded-full"><X size={20}/></button>
+                            
+                            <div className="mb-6">
+                                <h3 className="font-serif text-2xl text-[#1A1918] mb-1">Detalle: {detailsModalData.label}</h3>
+                                <p className="text-gray-500 text-sm">Lista de cobros pendientes y sesiones a agendar.</p>
+                            </div>
+
+                            <div className="overflow-y-auto flex-1 pr-2">
+                                {sortedDetails.length === 0 ? (
+                                    <p className="text-center text-gray-400 py-8">No hay montos pendientes para este mes.</p>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {sortedDetails.map(item => (
+                                            <div key={item.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-xl border border-gray-100 hover:border-[#A47864]/30 hover:shadow-md transition-all gap-4">
+                                                <div>
+                                                    <p className="font-bold text-[#1A1918]">{item.patientName || 'Desconocido'}</p>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <span className="text-xs text-gray-500 font-mono">{formatDate(item.date) || 'Sin Fecha'}</span>
+                                                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${item.isSimulated ? 'bg-blue-50 text-blue-600' : 'bg-orange-50 text-orange-600'}`}>
+                                                            {item.isSimulated ? 'Por Agendar (Simulado)' : 'Deuda Real (Agendado)'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                                                    <span className="font-serif text-xl text-[#A47864]">{formatCurrency(item.amount)}</span>
+                                                    <button 
+                                                        onClick={() => handleManageDetailItem(item)}
+                                                        className="bg-[#1A1918] text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-[#A47864] transition-colors whitespace-nowrap"
+                                                    >
+                                                        Gestionar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col md:flex-row text-brand-dark">
+                    <aside className="w-full md:w-64 bg-[#1A1918] text-white p-6 md:h-screen sticky top-0 flex flex-col justify-between z-20 shadow-2xl">
+                        <div>
+                            <h1 className="font-serif text-2xl mb-1 text-[#A47864]">Rosario Garrido.</h1>
+                            <p className="text-xs text-gray-400 mb-10 tracking-widest uppercase">Admin Comercial</p>
+                            <nav className="space-y-2">
+                                <button onClick={() => setView('dashboard')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${view === 'dashboard' ? 'bg-[#A47864]' : 'hover:bg-white/10'}`}><LayoutDashboard size={20} /> Proyección Mensual</button>
+                                <button onClick={() => setView('patients')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${view === 'patients' ? 'bg-[#A47864]' : 'hover:bg-white/10'}`}><Users size={20} /> Pacientes</button>
+                                <button onClick={() => setView('calendar')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${view === 'calendar' ? 'bg-[#A47864]' : 'hover:bg-white/10'}`}><Calendar size={20} /> Historial Citas</button>
+                            </nav>
+                        </div>
+                    </aside>
+
+                    <main className="flex-1 p-6 md:p-10 overflow-y-auto">
+                        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                            <h2 className="text-3xl font-serif text-brand-dark">
+                                {view === 'dashboard' && 'Ingresos y Oportunidades'}
+                                {view === 'patients' && 'Directorio de Pacientes'}
+                                {view === 'calendar' && 'Registro Financiero'}
+                            </h2>
+                            <button onClick={() => { 
+                                setEditingItem(null); 
+                                setApptForm({ patientId: '', type: 'Online (Nuevo)', date: new Date().toISOString().split('T')[0], price: 50000, paidAmount: 0 });
+                                setModalType('appointment'); 
+                                setIsModalOpen(true); 
+                            }} className="bg-[#7A2E2A] text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"><Plus size={18} /> <span>Agendar / Cobrar</span></button>
+                        </header>
+
+                        {view === 'dashboard' && (
+                            <div className="space-y-8 animate-fade-in">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <h3 className="font-serif text-2xl text-[#1A1918]">Flujo de Caja Mensual</h3>
+                                        <span className="bg-gray-200 text-gray-600 text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider">Simulador Automático</span>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <ProjCard monthData={projections[0]} colorClass="bg-[#1A1918]" onOpenDetails={setDetailsModalData} />
+                                        <ProjCard monthData={projections[1]} colorClass="bg-brand-mocha" onOpenDetails={setDetailsModalData} />
+                                        <ProjCard monthData={projections[2]} colorClass="bg-brand-lavender" onOpenDetails={setDetailsModalData} />
+                                    </div>
+                                </div>
+
+                                <div className="bg-white/60 backdrop-blur-xl border border-white rounded-3xl p-8 shadow-sm overflow-x-auto mt-8">
+                                    <h3 className="font-serif text-xl mb-2 flex items-center gap-2 text-[#A47864]"><Target size={20} /> Tareas Comerciales Inmediatas</h3>
+                                    <p className="text-sm text-gray-500 mb-6">Acciones sugeridas según la periodicidad.</p>
+                                    
+                                    <table className="w-full text-left text-sm">
+                                        <thead className="bg-gray-50/50">
+                                            <tr className="text-gray-500">
+                                                <th className="p-3 font-bold rounded-l-xl">Paciente</th>
+                                                <th className="p-3 font-bold">Datos Personales</th>
+                                                <th className="p-3 font-bold">Frecuencia</th>
+                                                <th className="p-3 font-bold">Gestión Requerida</th>
+                                                <th className="p-3 font-bold">Ingreso Esperado</th>
+                                                <th className="p-3 rounded-r-xl text-right">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100">
+                                            {patients.map(p => {
+                                                const commStatus = getCommercialAction(p, appointments);
+                                                const ActionIcon = commStatus.icon || AlertCircle;
+                                                return (
+                                                    <tr key={p.id} className="hover:bg-white transition-colors">
+                                                        <td className="p-4 font-bold text-lg text-[#1A1918]">
+                                                            {p.name || 'Sin Nombre'} {p.type === 'pack' && <span className="block text-[10px] text-[#A47864] mt-1 font-normal uppercase tracking-wider">Plan Pack</span>}
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <div className="flex flex-col gap-1 text-xs text-gray-500">
+                                                                <span className="flex items-center gap-1"><Mail size={12}/> {p.email || 'Sin correo'}</span>
+                                                                <span className="flex items-center gap-1"><Phone size={12}/> {p.phone || 'Sin teléfono'}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="p-4 text-gray-600 font-bold">{p.recurrence === 7 ? 'Semanal' : 'Quincenal'}</td>
+                                                        <td className="p-4">
+                                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${commStatus.color} ${commStatus.bg}`}>
+                                                                <ActionIcon size={14}/> {commStatus.action}
+                                                            </span>
+                                                        </td>
+                                                        <td className="p-4 font-mono font-bold text-[#A47864]">{formatCurrency(commStatus.amount)}</td>
+                                                        <td className="p-4 text-right">
+                                                            <button onClick={() => { 
+                                                                setEditingItem(null); 
+                                                                setApptForm({ patientId: p.id, type: p.type === 'pack' && (p.packCredits||0) <= 1 ? 'Pack Lanzamiento (Compra)' : (p.type === 'pack' ? 'Uso de Pack (Sesión)' : 'Online (Nuevo)'), date: new Date().toISOString().split('T')[0], price: p.basePrice || 50000, paidAmount: 0 });
+                                                                setModalType('appointment'); 
+                                                                setIsModalOpen(true); 
+                                                            }} className="text-sm font-bold bg-[#1A1918] text-white px-4 py-2 rounded-lg hover:bg-[#A47864] transition-colors shadow-md">
+                                                                Gestionar
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'patients' && (
+                            <div className="bg-white/60 backdrop-blur-xl border border-white rounded-3xl p-8 shadow-sm animate-fade-in">
+                                <div className="flex justify-between mb-6">
+                                    <h3 className="font-serif text-xl">Mis Pacientes</h3>
+                                    <button onClick={() => { setEditingItem(null); setPatientForm({ name: '', rut: '', phone: '', email: '', gender: 'F', system: 'Particular', type: 'normal', basePrice: 50000, recurrence: 15, packCredits: 0 }); setModalType('patient'); setIsModalOpen(true); }} className="text-[#A47864] font-bold text-sm hover:underline flex items-center gap-1"><UserPlus size={16} /> Nuevo Paciente</button>
+                                </div>
+                                <div className="grid grid-cols-1 gap-4">
+                                    {patients.map(p => (
+                                        <div key={p.id} className="bg-white p-4 rounded-2xl border border-gray-100 flex flex-col md:flex-row md:items-center justify-between hover:shadow-md transition-all gap-4">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${p.gender === 'F' ? 'bg-[#A78BFA]' : 'bg-[#A47864]'}`}>{(p.name || '?').charAt(0)}</div>
+                                                <div>
+                                                    <p className="font-bold text-lg">{p.name || 'Sin Nombre'} <span className="text-xs text-gray-400 font-normal ml-2">{p.rut || 'Sin RUT'}</span></p>
+                                                    <div className="flex flex-wrap items-center gap-3 mt-1 text-xs text-gray-500">
+                                                        <span className="flex items-center gap-1"><Mail size={12}/> {p.email || 'Sin correo'}</span>
+                                                        <span className="flex items-center gap-1"><Phone size={12}/> {p.phone || 'Sin teléfono'}</span>
+                                                        <span className="bg-gray-100 px-2 py-0.5 rounded text-xs font-bold text-[#1A1918]">{p.recurrence === 7 ? 'Semanal' : 'Quincenal'}</span>
+                                                        <span className="bg-gray-100 px-2 py-0.5 rounded text-xs font-bold text-[#A47864]">Tarifa: {formatCurrency(p.basePrice)}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => { setEditingItem(p); setPatientForm(p); setModalType('patient'); setIsModalOpen(true); }} className="text-gray-400 hover:text-[#A47864] bg-gray-50 p-2 rounded-full"><Edit2 size={16}/></button>
+                                                <button onClick={() => handleDelete(p.id, 'patient')} className="text-gray-400 hover:text-red-500 bg-gray-50 p-2 rounded-full"><Trash2 size={16}/></button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'calendar' && (
+                            <div className="bg-white/60 backdrop-blur-xl border border-white rounded-3xl p-8 shadow-sm animate-fade-in overflow-x-auto">
+                                <h3 className="font-serif text-xl mb-6">Registro Histórico</h3>
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-gray-50/50"><tr><th className="p-3">Fecha</th><th className="p-3">Paciente</th><th className="p-3">Servicio</th><th className="p-3">Cobro</th><th className="p-3">Estado</th><th className="p-3 text-right">Acción</th></tr></thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {appointments.map(appt => {
+                                            const st = getStatus(appt.price, appt.paidAmount);
+                                            return (
+                                                <tr key={appt.id} className="hover:bg-white transition-colors">
+                                                    <td className="p-3 text-gray-500">{formatDate(appt.date) || 'Sin Fecha'}</td>
+                                                    <td className="p-3 font-bold">{appt.patientName || 'Desconocido'} {(appt.type || '').includes('Pack') && <span className="ml-1 text-[10px] bg-[#A47864] text-white px-1 rounded">PACK</span>}</td>
+                                                    <td className="p-3 text-sm text-gray-600">{appt.type || 'Otro'}</td>
+                                                    <td className="p-3 font-mono">
+                                                        <div className="text-brand-dark">{formatCurrency(appt.price)}</div>
+                                                        {(appt.price || 0) > (appt.paidAmount || 0) && (appt.price || 0) > 0 && <div className="text-[10px] text-red-500 font-bold">Deuda: {formatCurrency(appt.price - appt.paidAmount)}</div>}
+                                                    </td>
+                                                    <td className="p-3"><span className={`px-2 py-1 rounded-full text-xs font-bold ${st.color}`}>{st.label}</span></td>
+                                                    <td className="p-3 text-right flex justify-end gap-2">
+                                                        <button onClick={() => { setEditingItem(appt); setApptForm(appt); setModalType('appointment'); setIsModalOpen(true); }} className="text-gray-400 hover:text-[#A47864]"><Edit2 size={16}/></button>
+                                                        <button onClick={() => handleDelete(appt.id, 'appt')} className="text-gray-400 hover:text-red-500"><Trash2 size={16}/></button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+
+                        {renderModal()}
+                        {renderDetailsModal()}
+                    </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
